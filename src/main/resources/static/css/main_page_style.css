@@ -1,0 +1,86 @@
+body, html {
+    height: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px;
+    position: relative;
+}
+
+.menu-toggle,
+.close-menu-toggle {
+    cursor: pointer;
+    color: #fff;
+    border: none;
+}
+
+.menu-toggle i,
+.close-menu-toggle i {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+h1 {
+    margin: 0;
+}
+
+
+.btn-secondary {
+    margin-right: 10px;
+    border: none;
+}
+
+.spacing {
+    width: 10px;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #333;
+    padding-top: 25px;
+    padding-left: 20px;
+    transition: left 0.3s;
+    z-index: 2;
+}
+
+.side-menu a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+}
+
+.side-menu a:hover {
+    background-color: #333;
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+}

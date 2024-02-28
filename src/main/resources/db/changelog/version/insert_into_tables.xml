@@ -1,0 +1,32 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="2" author="Marcin Zaczeniuk">
+
+        <insert tableName="user">
+            <column name="first_name" value = "Marcin"/>
+            <column name="last_name" value = "Zaczeniuk"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="username" value="Administrator"/>
+            <column name="password" value="10a23e7eacabe2317f458fac266a50233d5d02b31244be70477f4d780b7d2255"/><!-- hasloo           ${USER1_PASSWORD}-->
+            <column name="role" value="Administrator"/>
+        </insert>
+        <insert tableName="user">
+            <column name="first_name" value = "Tomasz"/>
+            <column name="last_name" value = "Kowalski"/>
+            <column name="email" value="tomasz.k@gmail.com"/>
+            <column name="username" value="User1"/>
+            <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
+            <column name="role" value="Wynajmujacy"/>
+        </insert>
+        <insert tableName="user">
+            <column name="first_name" value = "Karol"/>
+            <column name="last_name" value = "Kot"/>
+            <column name="email" value="karol.k@gmail.com"/>
+            <column name="username" value="User2"/>
+            <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
+            <column name="role" value="Najemca"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
