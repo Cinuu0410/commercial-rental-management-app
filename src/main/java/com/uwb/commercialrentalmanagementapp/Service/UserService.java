@@ -41,17 +41,17 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-//    public void register(String username, String password, String firstName, String lastName, String email) {
-//        User newUser = new User();
-//        newUser.setUsername(username);
-//        String hashedPassword = hashPassword(password);
-//        newUser.setPassword(hashedPassword);
-//        newUser.setFirstName(firstName);
-//        newUser.setLastName(lastName);
-//        newUser.setEmail(email);
-//        // Dodaj inne pola użytkownika, np. imię, nazwisko, e-mail
-//        userRepository.save(newUser);
-//    }
+    public void register(String username, String password, String firstName, String lastName, String email) {
+        User newUser = new User();
+        newUser.setUsername(username);
+        String hashedPassword = hashPassword(password);
+        newUser.setPassword(hashedPassword);
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setEmail(email);
+        // Dodaj inne pola użytkownika, np. imię, nazwisko, e-mail
+        userRepository.save(newUser);
+    }
 
     public String getRole(Long userId){
         return userRepository.findRole(userId);

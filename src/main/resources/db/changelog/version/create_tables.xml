@@ -5,7 +5,7 @@
 
     <changeSet id="1" author="Marcin Zaczeniuk">
 
-        <createTable tableName="user">
+        <createTable tableName="app_user">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

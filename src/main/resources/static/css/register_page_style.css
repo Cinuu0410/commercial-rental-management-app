@@ -1,0 +1,80 @@
+body, html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.registration-container {
+    width: 500px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.registration-container h2 {
+    text-align: center;
+    color: #333;
+}
+
+.registration-container form {
+    margin-top: 20px;
+}
+
+.registration-container label {
+    color: #333;
+    display: block;
+}
+
+.registration-container input[type="text"],
+.registration-container input[type="email"],
+.registration-container input[type="password"] {
+    width: calc(100% - 22px); /* Nowa wartość szerokości z uwzględnieniem paddingu i obramowania */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Dodano styl do osiągnięcia efektu obok siebie */
+.registration-container .in_row {
+    display: flex;
+    flex-direction: row; /* Ustawienie kierunku na kolumnę */
+    margin-bottom: 15px;
+}
+
+.registration-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.registration-container button:hover {
+    background-color: #333;
+}
+
+#gmailRegisterButton {
+    background: #b51233;
+}
+.form-group{
+    width: 300px;
+    text-align: center;
+    display: block;
+
+}
+
