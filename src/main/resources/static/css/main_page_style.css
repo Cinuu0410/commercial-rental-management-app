@@ -84,3 +84,58 @@ h1 {
     display: flex;
     align-items: center;
 }
+
+/* Dodatkowy styl dla opisu */
+.description {
+    font-family: 'Roboto', sans-serif; /* Używamy czcionki Roboto */
+    margin: 20px; /* Dodajemy marginesy */
+    padding: 20px; /* Dodajemy wewnętrzne odstępy */
+    border: 1px solid #ddd; /* Dodajemy ramkę */
+    border-radius: 10px; /* Zaokrąglamy narożniki */
+    overflow: hidden; /* Zapobiegamy przekroczeniu zawartości */
+    display: flex; /* Ustawiamy flexbox */
+    align-items: center; /* Wyśrodkowanie zawartości w pionie */
+    background-color: lightblue;
+}
+
+/* Styl dla sekcji z tekstem */
+.content {
+    flex: 1; /* Dostosowanie szerokości do dostępnego miejsca */
+}
+
+.content h1{
+    margin-top: -90px;
+    margin-bottom: 3px;
+}
+
+.content h2{
+    margin-bottom: 30px;
+}
+
+/* Styl dla obrazu */
+.image {
+    flex: 1; /* Dostosowanie szerokości do dostępnego miejsca */
+    text-align: right; /* Wyśrodkowanie obrazu po prawej stronie */
+    margin-left: 20px; /* Dodajemy odstęp między tekstem a obrazem */
+}
+
+.image img {
+    max-width: 100%; /* Maksymalna szerokość obrazu */
+}
+
+.content ol {
+    list-style: none; /* Ukrywamy domyślne punkty listy */
+    padding-left: 0; /* Usuwamy wewnętrzne odstępy */
+}
+
+.content ol li {
+    position: relative; /* Względne pozycjonowanie dla pozycji */
+    padding-left: 30px; /* Dodajemy wewnętrzny odstęp dla tekstu */
+    padding-right: 25px;
+}
+
+/* Dodajemy ikonę Font Awesome dla każdego elementu listy */
+.content ol li::before {
+    position: absolute; /* Absolutne pozycjonowanie */
+    left: 0; /* Pozycjonujemy w lewym kierunku */
+}

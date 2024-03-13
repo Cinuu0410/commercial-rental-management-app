@@ -20,8 +20,18 @@ public class User {
 
 
         public User() {
-            this.role = String.valueOf(UserRole.USER);
+                // Domyślny konstruktor
         }
+
+        public User(String username, String password, String firstName, String lastName, String email, UserRole role) {
+                this.username = username;
+                this.password = password;
+                this.firstName = firstName;
+                this.lastName = lastName;
+                this.email = email;
+                this.role = role.getRoleName(); // Ustawienie roli użytkownika
+        }
+
 
         @Transient
         private String rawPassword;

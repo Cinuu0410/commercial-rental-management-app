@@ -1,8 +1,9 @@
 package com.uwb.commercialrentalmanagementapp.Enum;
 
 public enum UserRole {
-    USER("USER"),
-    SUPER_USER("SUPER_USER"),
+    ADMINISTRATOR("Administrator"),
+    WYNAJMUJACY("Wynajmujacy"),
+    NAJEMCA("Najemca");
     ;
     private final String roleName;
     UserRole(String roleName) {

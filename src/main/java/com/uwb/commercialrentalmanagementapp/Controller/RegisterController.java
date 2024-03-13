@@ -1,5 +1,6 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
+import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
 import com.uwb.commercialrentalmanagementapp.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +24,15 @@ public class RegisterController {
     @PostMapping("/register")
     public String register(@RequestParam String username, @RequestParam String password,
                            @RequestParam String firstName, @RequestParam String lastName,
-                           @RequestParam String email, RedirectAttributes redirectAttributes,
+                           @RequestParam String email, @RequestParam UserRole role,
+                           RedirectAttributes redirectAttributes,
                            HttpSession session) {
         if (userService.userExists(username)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Użytkownik o podanej nazwie już istnieje.");
             return "redirect:/register";
         }
 
-        userService.register(username, password, firstName, lastName, email);
+        userService.register(username, password, firstName, lastName, email, role);
 
         // Zaloguj nowo zarejestrowanego użytkownika
         session.setAttribute("username", username);

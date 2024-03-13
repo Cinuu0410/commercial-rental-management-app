@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rental Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/contact_us_page_style.css}">
+</head>
+
+<body>
+<header>
+    <div class="top-bar">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+        <h1>
+            <span th:if="${loggedInUser}" th:text="${'Witaj, ' + loggedInUser.firstName + ' ' + loggedInUser.lastName + '!'}"></span>
+        </h1>
+        <div class="auth-buttons">
+            <span th:if="${loggedInUser}">
+                <button type="button" class="btn btn-secondary logout-button" onclick="logout()">Wyloguj się</button>
+            </span>
+            <span th:unless="${loggedInUser}">
+                <button type="button" class="btn btn-secondary login-button" onclick="redirectToLogin()">Zaloguj</button>
+                <span class="spacing"></span>
+                <button type="button" class="btn btn-secondary register-button" onclick="redirectToRegister()">Rejestracja</button>
+            </span>
+        </div>
+    </div>
+</header>
+
+<div class="toolbar-menu">
+    <div class="toolbar">
+        <div class="toolbar-top"></div>
+    </div>
+
+    <nav class="side-menu">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-times"></i> Zamknij
+        </button>
+        <a href="/main_page">Strona główna</a>
+        <a href="/contact_us">Kontakt</a>
+        <span th:if="${role eq 'Administrator'}">
+        <a href="/admin_panel">Panel administratora</a>
+        </span>
+    </nav>
+</div>
+
+<section class="contact-sec sec-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="contact-detail">
+                    <h1 class="section-title">Skontaktuj się z nami</h1>
+
+                    <ul class="contact-ul">
+                        <li><i class="fa fa-map-marker" aria-hidden="true"></i> Konstantego Ciołkowskiego 1, 15-245 Białystok</li>
+
+                        <li>
+                            <i class="fa fa-phone" aria-hidden="true"></i>
+                            <a href="tel:+48123456789"><b>+48 123 456 789</b></a>,
+                            <a href="tel:08510005495"><b>(010)11 22 333</b></a>
+                        </li>
+
+                        <li>
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                            <a href="mailto:pardeepkumar4bjp@gmail.com"><b> rent_manager_app@gmail.com</b></a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <form action="#" class="contFrm" method="POST">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input type="text" name="name" placeholder="Imię" class="inptFld" required />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <input type="email" name="email" placeholder="Adres e-mail" class="inptFld" required />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <input type="tel" name="phone" placeholder="Numer telefonu" class="inptFld" required />
+                        </div>
+
+                        <div class="col-sm-6">
+                            <input type="text" name="sub" placeholder="Temat" class="inptFld" required />
+                        </div>
+
+                        <div class="col-12">
+                            <textarea class="inptFld" rows="" cols="" placeholder="Opowiedz o swoim problemie..." required></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <input type="submit" name="submit" value="Wyślij" class="inptBtn" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function toggleMenu() {
+        var sideMenu = document.querySelector('.side-menu');
+        sideMenu.classList.toggle('open');
+    }
+
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    function redirectToRegister() {
+        window.location.href = "/register";
+    }
+
+    function logout() {
+        // W tym miejscu możesz wykonać operacje związane z wylogowywaniem,
+        // np. zakończenie sesji, usuwanie atrybutu 'loggedInUser' itp.
+
+        // Następnie przekieruj użytkownika na stronę wylogowania
+        window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
+    }
+
+</script>
+</body>
+</html>

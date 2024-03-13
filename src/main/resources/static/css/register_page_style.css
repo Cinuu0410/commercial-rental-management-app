@@ -20,6 +20,7 @@ body {
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 .registration-container h2 {
@@ -29,11 +30,13 @@ body {
 
 .registration-container form {
     margin-top: 20px;
+    text-align: center;
 }
 
 .registration-container label {
     color: #333;
     display: block;
+    text-align: center;
 }
 
 .registration-container input[type="text"],
@@ -71,10 +74,10 @@ body {
 #gmailRegisterButton {
     background: #b51233;
 }
+
 .form-group{
     width: 300px;
-    text-align: center;
+    margin: 0 auto;
     display: block;
-
 }
 

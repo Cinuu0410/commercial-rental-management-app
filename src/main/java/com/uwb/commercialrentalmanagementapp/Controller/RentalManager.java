@@ -41,36 +41,29 @@ public class RentalManager {
         return "main_page";
     }
 
-    public String panelPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login_page";
+    }
+
+    @GetMapping("/contact_us")
+    public String contactUsPage(Model model, HttpSession session){
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
             // Pobierz informacje o zalogowanym użytkowniku
-            Long userId = Long.valueOf(loggedInUser.getId());
+            Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
-
-            if (!loggedRole.equals(UserRole.SUPER_USER.getRoleName()) ) {
-                // Użytkownik nie ma roli SUPER_USER, przekieruj na stronę główną
-                return "redirect:/main_page";
-            }
+            System.out.println(loggedRole);
             // Zapisz informacje o zalogowanym użytkowniku i roli w sesji
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
             // Dodaj informacje o zalogowanym użytkowniku do modelu
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("role", loggedRole);
-
         }
-        else {
-            return "redirect:/login";
-        }
-
-        return "main_page";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login_page";
+        return "contact_us_page";
     }
 
 
