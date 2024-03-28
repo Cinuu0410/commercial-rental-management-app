@@ -1,7 +1,9 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
+import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import com.uwb.commercialrentalmanagementapp.Model.User;
+import com.uwb.commercialrentalmanagementapp.Service.RentalAgreementService;
 import com.uwb.commercialrentalmanagementapp.Service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +22,16 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RentalAgreementService rentalAgreementService;
+
     @GetMapping("/admin_panel")
     public String adminPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
             // Pobierz informacje o zalogowanym użytkowniku
-            Long userId = Long.valueOf(loggedInUser.getId());
+            Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.ADMINISTRATOR.getRoleName())) {
@@ -55,7 +60,7 @@ public class UserController {
 
         if (loggedInUser != null) {
             // Pobierz informacje o zalogowanym użytkowniku
-            Long userId = Long.valueOf(loggedInUser.getId());
+            Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.ADMINISTRATOR.getRoleName())) {
@@ -110,5 +115,36 @@ public class UserController {
         userService.saveUser(newUser);
         redirectAttributes.addFlashAttribute("successMessage", "Pomyślnie dodano użytkownika!");
         return "redirect:/admin_panel_manage_users"; // Lub inna strona docelowa
+    }
+
+    @GetMapping("/user_panel")
+    public String userPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        if (loggedInUser != null) {
+            // Pobierz informacje o zalogowanym użytkowniku
+            Long userId = loggedInUser.getId();
+            String loggedRole = userService.getRole(userId);
+
+            if (!loggedRole.equals(UserRole.WYNAJMUJACY.getRoleName()) && !loggedRole.equals(UserRole.NAJEMCA.getRoleName())) {
+                // Użytkownik nie ma roli wynajmujacy lub najemca, przekieruj na stronę główną
+                return "redirect:/main_page";
+            }
+
+            // Dodaj informacje o zalogowanym użytkowniku do modelu
+            session.setAttribute("loggedInUser", loggedInUser);
+            session.setAttribute("role", loggedRole);
+            List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
+
+
+            model.addAttribute("loggedInUser", loggedInUser);
+            model.addAttribute("role", loggedRole);
+            model.addAttribute("rentalAgreements", rentalAgreements);
+        } else {
+            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
+            return "redirect:/login";
+        }
+
+        return "user_panel_page";
     }
 }

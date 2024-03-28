@@ -2,8 +2,9 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <changeSet id="2" author="Marcin Zaczeniuk">
 
+<!--  TABELA APP_USER  -->
+    <changeSet id="2" author="Marcin Zaczeniuk">
         <insert tableName="app_user">
             <column name="first_name" value = "Marcin"/>
             <column name="last_name" value = "Zaczeniuk"/>
@@ -27,6 +28,68 @@
             <column name="username" value="User2"/>
             <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
             <column name="role" value="Najemca"/>
+        </insert>
+    </changeSet>
+
+<!--  TABELA PROPERTIES  -->
+    <changeSet id="3" author="Marcin Zaczeniuk">
+        <insert tableName="properties">
+            <column name="address" value = "Świętego Rocha 13/15 lok. 5"/>
+            <column name="area" value = "32"/>
+            <column name="number_of_rooms" value="1"/>
+            <column name="owner_id" value="2"/>
+        </insert>
+        <insert tableName="properties">
+            <column name="address" value = "Świętego Rocha 13/15 lok. 12"/>
+            <column name="area" value = "52"/>
+            <column name="number_of_rooms" value="2"/>
+            <column name="owner_id" value="2"/>
+        </insert>
+        <insert tableName="properties">
+            <column name="address" value = "Legionowa 9/1"/>
+            <column name="area" value = "25"/>
+            <column name="number_of_rooms" value="1"/>
+            <column name="owner_id" value="2"/>
+        </insert>
+    </changeSet>
+
+<!--  TABELA TENANT  -->
+    <changeSet id="4" author="Marcin Zaczeniuk">
+        <insert tableName="tenants">
+            <column name="user_id" value="3"/>
+            <column name="phone_number" value = "664664664"/>
+            <column name="address" value = "Klepacka 10/1"/>
+            <column name="city" value = "Klepacze"/>
+            <column name="post_code" value = "16-008"/>
+        </insert>
+    </changeSet>
+
+    <!--  TABELA LANDLORD  -->
+    <changeSet id="7" author="Marcin Zaczeniuk">
+        <insert tableName="landlords">
+            <column name="user_id" value="2"/>
+            <column name="phone_number" value = "123456789"/>
+            <column name="address" value = "Kościelna 13"/>
+            <column name="city" value = "Juchnowiec Kościelny"/>
+            <column name="post_code" value = "16-101"/>
+        </insert>
+    </changeSet>
+
+<!--  TABELA RENTAL_AGREEMENTS  -->
+    <changeSet id="6" author="Marcin Zaczeniuk">
+        <insert tableName="rental_agreements">
+            <column name="start_date" value="2024-03-15"/>
+            <column name="end_date" value = "2025-03-14"/>
+            <column name="rent_amount" value = "650"/>
+            <column name="property_id" value = "1"/>
+            <column name="tenant_id" value = "1"/>
+        </insert>
+        <insert tableName="rental_agreements">
+            <column name="start_date" value="2024-01-10"/>
+            <column name="end_date" value = "2025-01-10"/>
+            <column name="rent_amount" value = "450"/>
+            <column name="property_id" value = "3"/>
+            <column name="tenant_id" value = "1"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

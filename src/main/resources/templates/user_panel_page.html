@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" th:href="@{/css/main_page_style.css}">
+    <link rel="stylesheet" th:href="@{/css/admin_panel_page_style.css}">
 </head>
 
 <body>
@@ -46,33 +45,33 @@
         </span>
         <a href="/contact_us">Kontakt</a>
         <span th:if="${role eq 'Administrator'}">
-            <a href="/admin_panel">Panel administratora</a>
+        <a href="/admin_panel">Panel administratora</a>
         </span>
     </nav>
 </div>
 
-<div class="description">
-    <div class="content">
-        <h1>Witaj w Rent Manager!</h1>
-        <h2>Aplikacja wspomagająca zarządzanie wynajmem użytkowym</h2>
-        <section>
-            <h3>Główne funkcje aplikacji:</h3>
-            <ol>
-                <li><i class="fa-solid fa-check"></i> Łatwe zarządzanie nieruchomościami</li>
-                <li><i class="fa-solid fa-check"></i> Gromadzenie czynszu najmu i rozliczeń opłat za media w poszczególnych miesiącach</li>
-                <li><i class="fa-solid fa-check"></i> Rozliczanie finansowe (faktury, podatek VAT, podatek dochodowy)</li>
-                <li><i class="fa-solid fa-check"></i> Analiza wyników przychodu</li>
-                <li><i class="fa-solid fa-check"></i> Sugestia optymalizacji zysku wynajmu lokali na podstawie zgromadzonych wyników</li>
-                <li><i class="fa-solid fa-check"></i> Sugestia dobierania najemców</li>
-                <li><i class="fa-solid fa-check"></i> Analiza ryzyka najmu</li>
-                <li><i class="fa-solid fa-check"></i> Bezpieczeństwo i dostępność</li>
-            </ol>
-            <p>Rozpocznij korzystanie z naszej aplikacji już dziś i zobacz, jak możesz usprawnić swoje procesy zarządzania nieruchomościami!</p>
-        </section>
-    </div>
-    <div class="image">
-        <img th:src="@{/images/main_page_image.jpg}" alt="Zdjęcie" />
-    </div>
+<div class="container">
+    <h1>Twoje umowy najmu</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Numer umowy (ID)</th>
+            <th>Data rozpoczęcia</th>
+            <th>Data zakończenia</th>
+            <th>Kwota najmu (zł)</th>
+            <th>Nieruchomość (adres)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rentalAgreement : ${rentalAgreements}">
+            <td th:text="${rentalAgreement.agreementId}"></td>
+            <td th:text="${rentalAgreement.startDate}"></td>
+            <td th:text="${rentalAgreement.endDate}"></td>
+            <td th:text="${rentalAgreement.rentAmount}"></td>
+            <td th:text="${rentalAgreement.property.address}"></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <script>
@@ -98,7 +97,5 @@
     }
 
 </script>
-
-
 </body>
 </html>
