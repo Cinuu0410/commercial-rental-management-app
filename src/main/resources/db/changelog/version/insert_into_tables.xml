@@ -92,4 +92,16 @@
             <column name="tenant_id" value = "1"/>
         </insert>
     </changeSet>
+
+<!--    TABELA PAYMENTS   -->
+    <changeSet id="payments-inserts" author="Marcin Zaczeniuk">
+        <insert tableName="payments">
+            <column name="payment_date" value = "2024-04-10"/>
+            <column name="rental_agreement_id" value = "2"/>
+        </insert>
+        <insert tableName="payments">
+            <column name="payment_date" value = "2024-04-15"/>
+            <column name="rental_agreement_id" value = "1"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>

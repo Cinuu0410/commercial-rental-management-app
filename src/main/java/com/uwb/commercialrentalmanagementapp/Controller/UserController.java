@@ -1,8 +1,10 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
+import com.uwb.commercialrentalmanagementapp.Model.Property;
 import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import com.uwb.commercialrentalmanagementapp.Model.User;
+import com.uwb.commercialrentalmanagementapp.Service.PropertyService;
 import com.uwb.commercialrentalmanagementapp.Service.RentalAgreementService;
 import com.uwb.commercialrentalmanagementapp.Service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +27,8 @@ public class UserController {
     @Autowired
     private RentalAgreementService rentalAgreementService;
 
+    @Autowired
+    private PropertyService propertyService;
     @GetMapping("/admin_panel")
     public String adminPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -135,11 +139,13 @@ public class UserController {
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
             List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
+            List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
 
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("role", loggedRole);
             model.addAttribute("rentalAgreements", rentalAgreements);
+            model.addAttribute("properties", properties);
         } else {
             // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
             return "redirect:/login";

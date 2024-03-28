@@ -142,4 +142,24 @@
                                  constraintName="tenant_fk"
                                  onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="create-payment-table" author="Marcin Zaczeniuk">
+        <createTable tableName="payments">
+            <column name="payment_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="payment_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rental_agreement_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="payments"
+                                 baseColumnNames="rental_agreement_id"
+                                 referencedTableName="rental_agreements"
+                                 referencedColumnNames="agreement_id"
+                                 constraintName="fk_rental_agreement_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>

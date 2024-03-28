@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" th:href="@{/css/admin_panel_page_style.css}">
+    <link rel="stylesheet" th:href="@{/css/user_panel_page_style.css}">
 </head>
 
 <body>
@@ -50,8 +50,9 @@
     </nav>
 </div>
 
+<span th:if="${role eq 'Najemca'}">
 <div class="container">
-    <h1>Twoje umowy najmu</h1>
+    <h1 class="hCenter">Twoje umowy najmu</h1>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -73,7 +74,20 @@
         </tbody>
     </table>
 </div>
+</span>
 
+<span th:if="${role eq 'Wynajmujacy'}">
+<div class="container">
+                <div class="landlord-container">
+                    <h2 class="hCenter">Twoje nieruchomości</h2>
+                    <ul>
+                        <li th:each="property : ${properties}">
+                            <span th:text="${property.address}"></span>
+                        </li>
+                    </ul>
+                </div>
+</div>
+</span>
 <script>
     function toggleMenu() {
         var sideMenu = document.querySelector('.side-menu');

@@ -41,6 +41,9 @@
             <i class="fas fa-times"></i> Zamknij
         </button>
         <a href="/main_page">Strona główna</a>
+        <span th:if="${loggedInUser}">
+            <a href="/user_panel">Panel użytkownika</a>
+        </span>
         <a href="/contact_us">Kontakt</a>
         <span th:if="${role eq 'Administrator'}">
         <a href="/admin_panel">Panel administratora</a>
