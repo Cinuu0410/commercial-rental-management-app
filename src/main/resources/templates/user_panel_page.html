@@ -77,16 +77,38 @@
 </span>
 
 <span th:if="${role eq 'Wynajmujacy'}">
-<div class="container">
-                <div class="landlord-container">
-                    <h2 class="hCenter">Twoje nieruchomości</h2>
-                    <ul>
-                        <li th:each="property : ${properties}">
-                            <span th:text="${property.address}"></span>
-                        </li>
-                    </ul>
-                </div>
-</div>
+    <div class="container">
+        <div class="landlord-container-1">
+            <h2 class="hCenter">Twoje nieruchomości</h2>
+            <ul>
+                <li th:each="property : ${properties}"><i class="fa fa-building" aria-hidden="true"></i>
+                    <span th:text="${property.address}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container">
+        <div class="landlord-container">
+            <h2 class="hCenter">Zarządzanie czynszem i opłatami za media</h2>
+            <form action="/manage_rent_and_utilities" method="post">
+                <label for="property">Wybierz nieruchomość:</label>
+                <select name="property" id="property">
+                    <option value="">Wybierz nieruchomość</option>
+                    <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
+                </select>
+                <p id="utilitiesStatus">Status opłat za media: </p>
+                <label for="month">Miesiąc:</label>
+                <input type="month" name="month" id="month" required>
+                <label for="utilitiesAmount">Kwota za media:</label>
+                <input type="number" name="utilitiesAmount" id="utilitiesAmount" required>
+                <button type="submit">Zapisz</button>
+            </form>
+
+            <div class="wallet-info">
+                    Portfel: <span th:text="${walletBalance}"></span> PLN
+            </div>
+        </div>
+    </div>
 </span>
 <script>
     function toggleMenu() {
@@ -109,6 +131,8 @@
         // Następnie przekieruj użytkownika na stronę wylogowania
         window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
     }
+
+
 
 </script>
 </body>

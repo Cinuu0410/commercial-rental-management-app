@@ -7,14 +7,19 @@ import com.uwb.commercialrentalmanagementapp.Model.User;
 import com.uwb.commercialrentalmanagementapp.Service.PropertyService;
 import com.uwb.commercialrentalmanagementapp.Service.RentalAgreementService;
 import com.uwb.commercialrentalmanagementapp.Service.UserService;
+import com.uwb.commercialrentalmanagementapp.Service.WalletService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -29,6 +34,10 @@ public class UserController {
 
     @Autowired
     private PropertyService propertyService;
+
+    @Autowired
+    private WalletService walletService;
+
     @GetMapping("/admin_panel")
     public String adminPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
@@ -135,6 +144,13 @@ public class UserController {
                 return "redirect:/main_page";
             }
 
+            BigDecimal walletBalance = walletService.getBalance(loggedInUser.getId());
+            if (walletBalance == null) {
+                walletBalance = BigDecimal.ZERO;
+                session.setAttribute("walletBalance", walletBalance);
+            }
+
+
             // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
@@ -142,6 +158,8 @@ public class UserController {
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
 
+            // Przekaz informacje o saldzie do modelu
+            model.addAttribute("walletBalance", walletBalance);
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("role", loggedRole);
             model.addAttribute("rentalAgreements", rentalAgreements);
@@ -153,4 +171,6 @@ public class UserController {
 
         return "user_panel_page";
     }
+
+
 }

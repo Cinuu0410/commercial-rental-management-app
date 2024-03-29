@@ -1,10 +1,7 @@
 package com.uwb.commercialrentalmanagementapp.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.Data;
 import jakarta.persistence.*;
-import org.springframework.stereotype.Controller;
+import lombok.Data;
 
 @Data
 @Entity
@@ -27,7 +24,6 @@ public class Property {
 
     @Column(name="owner_id")
     private Long ownerId;
-
 
     public Property() {
         // Domyślny konstruktor

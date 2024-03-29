@@ -126,3 +126,13 @@ h1 {
 .table-striped tbody tr:hover {
     background-color: #bebbbb;
 }
+
+.landlord-container-1{
+    margin-left: 20px;
+}
+
+.landlord-container-1 ul {
+    list-style-type: none;
+    font-family: "Arial", sans-serif;
+    font-size: 17px;
+}

@@ -3,6 +3,9 @@ package com.uwb.commercialrentalmanagementapp.Model;
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Table(name = "app_user")
@@ -18,6 +21,10 @@ public class User {
         private String email;
         private String role;
 
+
+        // Dodano pole wallet do encji User
+        @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.0")
+        private BigDecimal wallet;
 
         public User() {
                 // Domyślny konstruktor

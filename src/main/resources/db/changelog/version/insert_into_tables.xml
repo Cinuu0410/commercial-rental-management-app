@@ -12,6 +12,7 @@
             <column name="username" value="Administrator"/>
             <column name="password" value="10a23e7eacabe2317f458fac266a50233d5d02b31244be70477f4d780b7d2255"/><!-- hasloo           ${USER1_PASSWORD}-->
             <column name="role" value="Administrator"/>
+            <column name="wallet" value="24900"/>
         </insert>
         <insert tableName="app_user">
             <column name="first_name" value = "Tomasz"/>
@@ -20,6 +21,7 @@
             <column name="username" value="User1"/>
             <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/> <!-- haslo -->
             <column name="role" value="Wynajmujacy"/>
+            <column name="wallet" value="1500"/>
         </insert>
         <insert tableName="app_user">
             <column name="first_name" value = "Karol"/>
@@ -28,6 +30,7 @@
             <column name="username" value="User2"/>
             <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
             <column name="role" value="Najemca"/>
+            <column name="wallet" value="2400"/>
         </insert>
     </changeSet>
 
@@ -98,10 +101,28 @@
         <insert tableName="payments">
             <column name="payment_date" value = "2024-04-10"/>
             <column name="rental_agreement_id" value = "2"/>
+            <column name="status" value = "unpaid"/>
         </insert>
         <insert tableName="payments">
             <column name="payment_date" value = "2024-04-15"/>
             <column name="rental_agreement_id" value = "1"/>
+            <column name="status" value = "unpaid"/>
+        </insert>
+    </changeSet>
+
+<!--    TABELA UTILITIES_PAYMENTS  -->
+    <changeSet id="utilities-payments-inserts" author="Marcin Zaczeniuk">
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "320"/>
+            <column name="property_id" value = "1"/>
+            <column name="status" value="unpaid"/>
+        </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "280"/>
+            <column name="property_id" value = "3"/>
+            <column name="status" value="unpaid"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

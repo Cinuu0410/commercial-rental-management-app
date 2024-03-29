@@ -27,6 +27,9 @@
             <column name="role" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="wallet" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createTable tableName="properties">
@@ -154,12 +157,41 @@
             <column name="rental_agreement_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="payments"
                                  baseColumnNames="rental_agreement_id"
                                  referencedTableName="rental_agreements"
                                  referencedColumnNames="agreement_id"
                                  constraintName="fk_rental_agreement_id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="7" author="Autor">
+        <createTable tableName="utilities_payments">
+            <column name="payment_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="payment_date" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="property_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="utilities_payments"
+                                 baseColumnNames="property_id"
+                                 referencedTableName="properties"
+                                 referencedColumnNames="property_id"
+                                 constraintName="fk_property_id"
                                  onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>
