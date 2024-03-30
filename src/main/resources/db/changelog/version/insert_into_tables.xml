@@ -116,19 +116,51 @@
             <column name="payment_date" value = "NULL"/>
             <column name="amount" value = "320"/>
             <column name="property_id" value = "1"/>
-            <column name="status" value="unpaid"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="March"/>
         </insert>
         <insert tableName="utilities_payments">
             <column name="payment_date" value = "NULL"/>
             <column name="amount" value = "280"/>
             <column name="property_id" value = "3"/>
             <column name="status" value="unpaid"/>
+            <column name="payment_month" value="April"/>
+        </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "360"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="January"/>
         </insert>
         <insert tableName="utilities_payments">
             <column name="payment_date" value = "NULL"/>
             <column name="amount" value = "380"/>
             <column name="property_id" value = "2"/>
             <column name="status" value="paid"/>
+            <column name="payment_month" value="February"/>
         </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "380"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="March"/>
+        </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "380"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="April"/>
+        </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "580"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="May"/>
+        </insert>
+
     </changeSet>
 </databaseChangeLog>

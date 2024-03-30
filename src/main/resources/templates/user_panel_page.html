@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" th:href="@{/css/user_panel_page_style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -108,7 +109,104 @@
             </div>
         </div>
     </div>
+    <div class="container">
+    <h2 class="hCenter">Rozliczenia opłat za media w poszczególnych miesiącach</h2>
+    <canvas id="utilitiesChart" width="800" height="400"></canvas>
+</div>
 </span>
+<script>
+    // Dane do wykresu - pobierz z modelu Thymeleaf
+    var utilitiesData = [];
+
+    function generateChart() {
+        var months = utilitiesData.map(entry => entry.month);
+        var amounts = utilitiesData.map(entry => entry.amount);
+
+        console.log('Months:', months);
+        console.log('Amounts:', amounts);
+
+        // Znajdź istniejący wykres
+        var existingChart = Chart.getChart("utilitiesChart");
+        // Jeśli istnieje, zniszcz go
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        var ctx = document.getElementById('utilitiesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Kwota za media (PLN)',
+                    data: amounts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    }
+
+    function updateUtilitiesStatus() {
+        // Znajdź istniejący wykres
+        var existingChart = Chart.getChart("utilitiesChart");
+        // Jeśli istnieje, zniszcz go
+        if (existingChart) {
+            existingChart.destroy();
+        }
+        var propertyId = document.getElementById('property').value;
+        console.log('Wybrano nieruchomość o ID:', propertyId);
+        if (propertyId !== '') {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var utilitiesStatus = response.status;
+                        var utilitiesAmount = response.amounts;
+                        var utilitiesMonths = response.months;
+                        var latestAmount = response.latestAmount;
+                        console.log('Status opłat za media:', utilitiesStatus);
+                        console.log('Kwota za media:', utilitiesAmount);
+                        console.log('Miesiące:', utilitiesMonths.join(', '));
+                        console.log("Najnowsza kwota w tabeli: ", latestAmount);
+
+                        document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
+                        // document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + utilitiesAmount;
+                        document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + response.latestAmount;
+
+
+                        if (utilitiesStatus === 'Opłacone') {
+                            utilitiesData = [];
+                            for (var i = 0; i < utilitiesMonths.length; i++) {
+                                utilitiesData.push({ month: utilitiesMonths[i], amount: utilitiesAmount[i] });
+                            }
+                            generateChart();
+                        }
+                    } else {
+                        console.error('Błąd żądania AJAX:', xhr.status);
+                    }
+                }
+            };
+            xhr.open('GET', '/getUtilitiesStatus/' + propertyId);
+            xhr.send();
+        } else {
+            document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ';
+            document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ';
+        }
+    }
+
+</script>
 <script>
     function toggleMenu() {
         var sideMenu = document.querySelector('.side-menu');
@@ -131,33 +229,34 @@
         window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
     }
 
-    function updateUtilitiesStatus() {
-        var propertyId = document.getElementById('property').value;
-        console.log('Wybrano nieruchomość o ID:', propertyId);
-        if (propertyId !== '') {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        var utilitiesStatus = response.status;
-                        var utilitiesAmount = response.amount;
-                        console.log('Status opłat za media:', utilitiesStatus);
-                        console.log('Kwota za media:', utilitiesAmount);
-                        document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
-                        document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + utilitiesAmount;
-                    } else {
-                        console.error('Błąd żądania AJAX:', xhr.status);
-                    }
-                }
-            };
-            xhr.open('GET', '/getUtilitiesStatus/' + propertyId);
-            xhr.send();
-        } else {
-            document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ';
-            document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ';
-        }
-    }
+    // function updateUtilitiesStatus() {
+    //     var propertyId = document.getElementById('property').value;
+    //     console.log('Wybrano nieruchomość o ID:', propertyId);
+    //     if (propertyId !== '') {
+    //         var xhr = new XMLHttpRequest();
+    //         xhr.onreadystatechange = function() {
+    //             if (xhr.readyState === XMLHttpRequest.DONE) {
+    //                 if (xhr.status === 200) {
+    //                     var response = JSON.parse(xhr.responseText);
+    //                     var utilitiesStatus = response.status;
+    //                     var utilitiesAmount = response.amount;
+    //                     console.log('Status opłat za media:', utilitiesStatus);
+    //                     console.log('Kwota za media:', utilitiesAmount);
+    //                     document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
+    //                     document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + utilitiesAmount;
+    //                 } else {
+    //                     console.error('Błąd żądania AJAX:', xhr.status);
+    //                 }
+    //             }
+    //         };
+    //         xhr.open('GET', '/getUtilitiesStatus/' + propertyId);
+    //         xhr.send();
+    //     } else {
+    //         document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ';
+    //         document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ';
+    //     }
+    // }
+
 
 </script>
 </body>

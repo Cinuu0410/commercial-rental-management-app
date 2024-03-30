@@ -28,6 +28,9 @@ public class UtilitiesPayment {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "payment_month")
+    private String paymentMonth;
+
 
     public UtilitiesPayment() {
 

@@ -183,6 +183,9 @@
             <column name="property_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+            <column name="payment_month" type="VARCHAR(15)">
+                <constraints nullable="false"/>
+            </column>
             <column name="status" type="VARCHAR(15)">
                 <constraints nullable="false"/>
             </column>

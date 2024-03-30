@@ -8,8 +8,6 @@ import com.uwb.commercialrentalmanagementapp.Service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -183,9 +181,14 @@ public class UserController {
     public Map<String, Object> getUtilitiesStatus(@PathVariable Long propertyId) {
         Map<String, Object> result = new HashMap<>();
         String status = utilitiesPaymentService.getUtilitiesStatusForProperty(propertyId);
-        BigDecimal amount = utilitiesPaymentService.getUtilitiesAmountForProperty(propertyId);
+        List<BigDecimal> amounts = utilitiesPaymentService.getUtilitiesAmountsForProperty(propertyId);
+        List<String> months = utilitiesPaymentService.getUtilitiesMonthsForProperty(propertyId);
+        BigDecimal latestAmount = utilitiesPaymentService.getLatestUtilitiesAmountForProperty(propertyId);
         result.put("status", status);
-        result.put("amount", amount);
+        result.put("amounts", amounts);
+        result.put("months", months);
+        result.put("latestAmount", latestAmount);
         return result;
     }
+
 }

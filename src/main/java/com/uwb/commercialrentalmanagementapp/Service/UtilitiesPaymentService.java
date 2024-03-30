@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UtilitiesPaymentService {
@@ -26,12 +29,28 @@ public class UtilitiesPaymentService {
         }
     }
 
-    public BigDecimal getUtilitiesAmountForProperty(Long propertyId) {
-        BigDecimal utilitiesPayment = utilitiesPaymentRepository.findAmountByPropertyId(propertyId);
-        if (utilitiesPayment != null) {
-            return utilitiesPayment;
-        } else {
-            return BigDecimal.ZERO; // Jeśli brak informacji o płatnościach, zwróć zero
-        }
+    public List<BigDecimal> getUtilitiesAmountsForProperty(Long propertyId) {
+        List<BigDecimal> utilitiesPayments = utilitiesPaymentRepository.findAmountsByPropertyId(propertyId);
+        return utilitiesPayments != null ? utilitiesPayments : Collections.emptyList();
     }
+
+//    public BigDecimal getLatestUtilitiesAmountForProperty(Long propertyId){
+//        // Pobierz najnowszy rekord opłat za media dla danej nieruchomości
+//        Optional<UtilitiesPayment> latestPayment = utilitiesPaymentRepository.findTopByPropertyIdOrderByPaymentDateDesc(propertyId);
+//        if (latestPayment.isPresent()) {
+//            return latestPayment.get().getAmount();
+//        } else {
+//            return BigDecimal.ZERO; // Zwróć zero, jeśli brak informacji o płatnościach
+//        }
+//    }
+
+    public BigDecimal getLatestUtilitiesAmountForProperty(Long propertyId) {
+        return utilitiesPaymentRepository.findLatestUtilitiesAmountForProperty(propertyId);
+    }
+    public List<String> getUtilitiesMonthsForProperty(Long propertyId) {
+        return utilitiesPaymentRepository.findMonthsByPropertyId(propertyId);
+    }
+
+
+
 }
