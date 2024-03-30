@@ -124,5 +124,11 @@
             <column name="property_id" value = "3"/>
             <column name="status" value="unpaid"/>
         </insert>
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "380"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>

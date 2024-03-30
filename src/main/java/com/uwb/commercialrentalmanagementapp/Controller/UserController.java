@@ -4,23 +4,21 @@ import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
 import com.uwb.commercialrentalmanagementapp.Model.Property;
 import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import com.uwb.commercialrentalmanagementapp.Model.User;
-import com.uwb.commercialrentalmanagementapp.Service.PropertyService;
-import com.uwb.commercialrentalmanagementapp.Service.RentalAgreementService;
-import com.uwb.commercialrentalmanagementapp.Service.UserService;
-import com.uwb.commercialrentalmanagementapp.Service.WalletService;
+import com.uwb.commercialrentalmanagementapp.Service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -37,6 +35,9 @@ public class UserController {
 
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private UtilitiesPaymentService utilitiesPaymentService;
 
     @GetMapping("/admin_panel")
     public String adminPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -156,6 +157,11 @@ public class UserController {
             session.setAttribute("role", loggedRole);
             List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
+            if (!properties.isEmpty()) {
+                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
+                String utilitiesStatus = utilitiesPaymentService.getUtilitiesStatusForProperty(propertyId);
+                model.addAttribute("utilitiesStatus", utilitiesStatus);
+            }
 
 
             // Przekaz informacje o saldzie do modelu
@@ -172,5 +178,14 @@ public class UserController {
         return "user_panel_page";
     }
 
-
+    @GetMapping("/getUtilitiesStatus/{propertyId}")
+    @ResponseBody
+    public Map<String, Object> getUtilitiesStatus(@PathVariable Long propertyId) {
+        Map<String, Object> result = new HashMap<>();
+        String status = utilitiesPaymentService.getUtilitiesStatusForProperty(propertyId);
+        BigDecimal amount = utilitiesPaymentService.getUtilitiesAmountForProperty(propertyId);
+        result.put("status", status);
+        result.put("amount", amount);
+        return result;
+    }
 }
