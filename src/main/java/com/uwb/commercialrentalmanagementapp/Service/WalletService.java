@@ -23,29 +23,4 @@ public class WalletService {
         return userRepository.findWalletBalanceByUserId(userId);
     }
 
-
-//    public void addToBalance(User user, BigDecimal amount) {
-//        User existingUser = userRepository.findByUsername(user.getUsername());
-//        if (existingUser != null) {
-//            // Upewnij się, że wallet nie jest nullem
-//            existingUser.setWallet(existingUser.getWallet() != null ? existingUser.getWallet() : BigDecimal.ZERO);
-//            existingUser.setWallet(existingUser.getWallet().add(amount));
-//            userRepository.save(existingUser);
-//        } else {
-//            throw new IllegalArgumentException("User not found.");
-//        }
-//    }
-
-
-//    public void deductFromBalance(User user, BigDecimal amount) {
-//        Wallet wallet = walletRepository.findByUser(user);
-//        if (wallet != null && wallet.getBalance().compareTo(amount) >= 0) {
-//            wallet.setBalance(wallet.getBalance().subtract(amount));
-//            walletRepository.save(wallet);
-//        } else {
-//            throw new IllegalArgumentException("Insufficient funds in the wallet.");
-//        }
-//    }
-
-
 }

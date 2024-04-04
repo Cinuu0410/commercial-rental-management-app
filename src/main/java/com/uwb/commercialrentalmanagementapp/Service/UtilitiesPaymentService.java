@@ -1,14 +1,13 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
-import com.uwb.commercialrentalmanagementapp.Model.UtilitiesPayment;
 import com.uwb.commercialrentalmanagementapp.Repository.UtilitiesPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UtilitiesPaymentService {
@@ -34,15 +33,6 @@ public class UtilitiesPaymentService {
         return utilitiesPayments != null ? utilitiesPayments : Collections.emptyList();
     }
 
-//    public BigDecimal getLatestUtilitiesAmountForProperty(Long propertyId){
-//        // Pobierz najnowszy rekord opłat za media dla danej nieruchomości
-//        Optional<UtilitiesPayment> latestPayment = utilitiesPaymentRepository.findTopByPropertyIdOrderByPaymentDateDesc(propertyId);
-//        if (latestPayment.isPresent()) {
-//            return latestPayment.get().getAmount();
-//        } else {
-//            return BigDecimal.ZERO; // Zwróć zero, jeśli brak informacji o płatnościach
-//        }
-//    }
 
     public BigDecimal getLatestUtilitiesAmountForProperty(Long propertyId) {
         return utilitiesPaymentRepository.findLatestUtilitiesAmountForProperty(propertyId);
@@ -52,5 +42,16 @@ public class UtilitiesPaymentService {
     }
 
 
+    public String getPaymentMonthForProperty(Long propertyId) {
+        return utilitiesPaymentRepository.findUnpaidPaymentMonthByPropertyId(propertyId);
+    }
 
+    public Long getPaymentIdForProperty(Long propertyId) {
+        return utilitiesPaymentRepository.findPaymentIdForUnpaidPaymentByPropertyId(propertyId);
+    }
+
+    // Metoda aktualizująca status płatności za media na "paid"
+    public void updateUtilitiesStatusToPaid(Long paymentId, Date paymentDate) {
+        utilitiesPaymentRepository.updateStatusToPaid(paymentId, paymentDate);
+    }
 }

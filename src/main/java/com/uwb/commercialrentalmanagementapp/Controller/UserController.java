@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,11 +185,30 @@ public class UserController {
         List<BigDecimal> amounts = utilitiesPaymentService.getUtilitiesAmountsForProperty(propertyId);
         List<String> months = utilitiesPaymentService.getUtilitiesMonthsForProperty(propertyId);
         BigDecimal latestAmount = utilitiesPaymentService.getLatestUtilitiesAmountForProperty(propertyId);
+        String paymentMonth = utilitiesPaymentService.getPaymentMonthForProperty(propertyId);
+        Long paymentIdForProperty = utilitiesPaymentService.getPaymentIdForProperty(propertyId);
+
         result.put("status", status);
         result.put("amounts", amounts);
         result.put("months", months);
         result.put("latestAmount", latestAmount);
+        result.put("paymentMonth", paymentMonth);
+        result.put("paymentIdForProperty", paymentIdForProperty);
+
         return result;
     }
 
+    @PostMapping("/payUtilities/{paymentId}")
+    public String payUtilities(@PathVariable Long paymentId) {
+        // Uzyskaj bieżący znacznik czasu w milisekundach
+        long currentTimeMillis = System.currentTimeMillis();
+
+        // Utwórz obiekt Date na podstawie bieżącego znacznika czasu
+        Date paymentDate = new Date(currentTimeMillis);
+
+        // Wywołaj metodę usługi z paymentId i paymentDate
+        utilitiesPaymentService.updateUtilitiesStatusToPaid(paymentId, paymentDate);
+
+        return "redirect:/user_panel"; // Przekieruj z powrotem do panelu użytkownika
+    }
 }

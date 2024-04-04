@@ -41,12 +41,8 @@ public class WalletController {
         return "wallet_page";
     }
 
-//    @PostMapping("/deductFromWallet")
-//    public String deductFromWallet(@RequestParam BigDecimal amount, HttpSession session) {
-//        User loggedInUser = (User) session.getAttribute("loggedInUser");
-//        walletService.deductFromBalance(loggedInUser, amount);
-//        return "redirect:/wallet";
-//    }
+
+
 
 }
 

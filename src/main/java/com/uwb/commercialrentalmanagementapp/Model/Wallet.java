@@ -18,5 +18,4 @@ public class Wallet {
 
     private BigDecimal balance;
 
-    // Getters, setters i inne metody
 }

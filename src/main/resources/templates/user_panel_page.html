@@ -91,17 +91,18 @@
     <div class="container">
         <div class="landlord-container">
             <h2 class="hCenter">Zarządzanie czynszem i opłatami za media</h2>
-           <form action="/manage_rent_and_utilities" method="get" id="rentAndUtilitiesForm">
+
+           <form method="post" id="rentAndUtilitiesForm" action="/payUtilities/">
                 <label for="property">Wybierz nieruchomość:</label>
                 <select name="property" id="property" onchange="updateUtilitiesStatus()">
                     <option value="">Wybierz nieruchomość</option>
                     <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
                 </select>
                 <p id="utilitiesStatus">Status opłat za media: </p>
-                <label for="month">Miesiąc:</label>
-                <input type="month" name="month" id="month" required>
-                <p id = "utilitiesAmount">Kwota za media: </p>
-                <button type="submit">Opłać</button>
+                <p id="utilitiesMonth">Opłata za miesiąc: </p>
+                <p id="utilitiesId">ID płatności: </p>
+                <p id="utilitiesAmount">Kwota za media: </p>
+               <button type="submit">Opłać</button>
             </form>
 
             <div class="wallet-info">
@@ -110,10 +111,56 @@
         </div>
     </div>
     <div class="container">
-    <h2 class="hCenter">Rozliczenia opłat za media w poszczególnych miesiącach</h2>
-    <canvas id="utilitiesChart" width="800" height="400"></canvas>
-</div>
+        <h2 class="hCenter">Rozliczenia opłat za media w poszczególnych miesiącach</h2>
+        <canvas id="utilitiesChart" width="800" height="400"></canvas>
+    </div>
 </span>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Funkcja obsługująca opłacanie płatności za media
+        function payUtilities(paymentId) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Pomyślnie opłacono płatność, możesz wykonać odpowiednie działania
+                        alert("Płatność za media została pomyślnie opłacona.");
+                        // Możesz też wykonać dodatkowe operacje, np. przeładować stronę
+                        window.location.reload();
+                    } else {
+                        // Wystąpił błąd podczas opłacania płatności
+                        alert("Wystąpił błąd podczas opłacania płatności. Spróbuj ponownie później.");
+                        console.error("Błąd żądania AJAX:", xhr.status);
+                    }
+                }
+            };
+            xhr.open("POST", "/payUtilities/" + paymentId);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.send(JSON.stringify({ status: "paid" }));
+        }
+
+        // Funkcja obsługująca kliknięcie przycisku "Opłać" w formularzu
+        function handlePayment() {
+            document.getElementById("rentAndUtilitiesForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Zapobiegamy domyślnej akcji formularza (czyli wysłaniu żądania POST)
+
+                // var propertyId = document.getElementById("property").value;
+                var paymentIdString = document.getElementById("utilitiesId").textContent.trim(); // Pobieramy ID płatności jako tekst
+                var paymentId = parseInt(paymentIdString.replace('ID płatności:', '').trim()); // Konwertujemy tekst na liczbę całkowitą
+                if (paymentId  !== '') {
+                    // Jeśli wybrano nieruchomość, wykonaj płatność
+                    payUtilities(paymentId );
+                } else {
+                    // Jeśli nie wybrano nieruchomości, wyświetl komunikat
+                    alert("Wybierz nieruchomość przed opłaceniem płatności za media.");
+                }
+            });
+        }
+
+        // Wywołaj funkcję obsługującą płatność po załadowaniu strony
+        handlePayment();
+    });
+</script>
 <script>
     // Dane do wykresu - pobierz z modelu Thymeleaf
     var utilitiesData = [];
@@ -174,17 +221,47 @@
                         var response = JSON.parse(xhr.responseText);
                         var utilitiesStatus = response.status;
                         var utilitiesAmount = response.amounts;
-                        var utilitiesMonths = response.months;
                         var latestAmount = response.latestAmount;
+                        var paymentIdForProperty = response.paymentIdForProperty;
+                        // Mapowanie miesięcy na polskie nazwy
+                        const mapMonth = month => {
+                            switch (month) {
+                                case 'January': return 'Styczeń';
+                                case 'February': return 'Luty';
+                                case 'March': return 'Marzec';
+                                case 'April': return 'Kwiecień';
+                                case 'May': return 'Maj';
+                                case 'June': return 'Czerwiec';
+                                case 'July': return 'Lipiec';
+                                case 'August': return 'Sierpień';
+                                case 'September': return 'Wrzesień';
+                                case 'October': return 'Październik';
+                                case 'November': return 'Listopad';
+                                case 'December': return 'Grudzień';
+                                default: return month;
+                            }
+                        };
+                        const utilitiesMonths = response.months.map(mapMonth);
+                        const paymentMonth = mapMonth(response.paymentMonth);
+
+
                         console.log('Status opłat za media:', utilitiesStatus);
                         console.log('Kwota za media:', utilitiesAmount);
                         console.log('Miesiące:', utilitiesMonths.join(', '));
                         console.log("Najnowsza kwota w tabeli: ", latestAmount);
+                        console.log("Opłata za miesiąc: ", paymentMonth);
+                        console.log("ID płatności: ", paymentIdForProperty);
 
                         document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
-                        // document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + utilitiesAmount;
-                        document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + response.latestAmount;
+                        document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + latestAmount;
+                        document.getElementById('utilitiesId').textContent = 'ID płatności:' + paymentIdForProperty;
 
+
+                        if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana.') {
+                            document.getElementById('utilitiesMonth').textContent = 'Opłata za miesiąc: ' + paymentMonth;
+                        } else {
+                            document.getElementById('utilitiesMonth').textContent = 'Opłata za miesiąc: brak zaległych opłat';
+                        }
 
                         if (utilitiesStatus === 'Opłacone') {
                             utilitiesData = [];
@@ -203,9 +280,9 @@
         } else {
             document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ';
             document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ';
+            document.getElementById('utilitiesMonth').textContent = 'Opłata za miesiąc: ';
         }
     }
-
 </script>
 <script>
     function toggleMenu() {
@@ -228,36 +305,6 @@
         // Następnie przekieruj użytkownika na stronę wylogowania
         window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
     }
-
-    // function updateUtilitiesStatus() {
-    //     var propertyId = document.getElementById('property').value;
-    //     console.log('Wybrano nieruchomość o ID:', propertyId);
-    //     if (propertyId !== '') {
-    //         var xhr = new XMLHttpRequest();
-    //         xhr.onreadystatechange = function() {
-    //             if (xhr.readyState === XMLHttpRequest.DONE) {
-    //                 if (xhr.status === 200) {
-    //                     var response = JSON.parse(xhr.responseText);
-    //                     var utilitiesStatus = response.status;
-    //                     var utilitiesAmount = response.amount;
-    //                     console.log('Status opłat za media:', utilitiesStatus);
-    //                     console.log('Kwota za media:', utilitiesAmount);
-    //                     document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
-    //                     document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + utilitiesAmount;
-    //                 } else {
-    //                     console.error('Błąd żądania AJAX:', xhr.status);
-    //                 }
-    //             }
-    //         };
-    //         xhr.open('GET', '/getUtilitiesStatus/' + propertyId);
-    //         xhr.send();
-    //     } else {
-    //         document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ';
-    //         document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ';
-    //     }
-    // }
-
-
 </script>
 </body>
 </html>
