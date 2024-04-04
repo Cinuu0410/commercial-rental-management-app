@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @GetMapping("/admin_panel_manage_users")
-        public String adminPanelManageUsers(Model model, HttpSession session, RedirectAttributes redirectAttributes){
+    public String adminPanelManageUsers(Model model, HttpSession session, RedirectAttributes redirectAttributes){
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
