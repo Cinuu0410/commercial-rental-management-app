@@ -19,4 +19,11 @@ public class RentalAgreementService {
     public List<RentalAgreement> getRentalAgreementsForUser(Long userId) {
         return rentalAgreementRepository.findRentalAgreementsByTenantUserId(userId);
     }
+
+    // Metoda do pobierania rentalAgreementId na podstawie propertyId
+    public Long getRentalAgreementIdByPropertyId(Long propertyId) {
+        RentalAgreement rentalAgreement = rentalAgreementRepository.findByProperty_PropertyId(propertyId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental agreement not found for propertyId: " + propertyId));
+        return rentalAgreement.getAgreementId();
+    }
 }

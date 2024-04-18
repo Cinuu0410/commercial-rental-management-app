@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
@@ -41,7 +43,12 @@ public class WalletController {
         return "wallet_page";
     }
 
-
+    @PostMapping("/deductFromWallet")
+    public String deductFromWallet(@RequestParam BigDecimal amount, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        walletService.deductFromBalance(loggedInUser, amount);
+        return "redirect:/wallet";
+    }
 
 
 }

@@ -33,7 +33,6 @@ public class RentalAgreement {
     private Tenant tenant;
 
     public RentalAgreement() {
-        // Domyślny konstruktor
     }
 
     public RentalAgreement(LocalDate startDate, LocalDate endDate, BigDecimal rentAmount, Property property, Tenant tenant) {

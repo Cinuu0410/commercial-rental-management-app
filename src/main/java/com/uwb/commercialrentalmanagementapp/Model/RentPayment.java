@@ -8,8 +8,8 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "utilities_payments")
-public class UtilitiesPayment {
+@Table(name = "rent_payments")
+public class RentPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,18 +19,11 @@ public class UtilitiesPayment {
     @Column(name = "payment_date")
     private Date paymentDate;
 
-    @Column(name = "amount")
-    private BigDecimal amount;
-
-    @Column(name = "property_id")
-    private Long propertyId;
+    @Column(name = "rental_agreement_id")
+    private Long rentalAgreementId;
 
     @Column(name = "status")
     private String status;
 
-    @Column(name = "payment_month")
-    private String paymentMonth;
-
-
-    public UtilitiesPayment() {}
+    public RentPayment() {}
 }

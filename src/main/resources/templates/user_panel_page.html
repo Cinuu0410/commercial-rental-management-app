@@ -108,6 +108,12 @@
             <div class="wallet-info">
                     Portfel: <span th:text="${walletBalance}"></span> PLN
             </div>
+
+            <form method="post" id ="rentAndInvoiceForm" action="/createInvoice">
+                <p id="rentStatus">Status opłaty czynszu przez najemcę: </p>
+                <button type="submit">Wystaw fakturę</button>
+            </form>
+
         </div>
     </div>
     <div class="container">
@@ -115,6 +121,49 @@
         <canvas id="utilitiesChart" width="800" height="400"></canvas>
     </div>
 </span>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Funkcja obsługująca opłacanie płatności za media
+        function createInvoice(propertyId) {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Pomyślnie
+                        alert("Faktura została wystawiona.");
+                        // Możesz też wykonać dodatkowe operacje, np. przeładować stronę
+                        window.location.reload();
+                    } else {
+                        // Wystąpił błąd podczas wystawiania faktury
+                        alert("Wystąpił błąd podczas wystawiania faktury. Spróbuj ponownie później.");
+                        console.error("Błąd żądania AJAX:", xhr.status);
+                    }
+                }
+            };
+
+            xhr.open("POST", "/createInvoice");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("propertyId=" + propertyId);
+        }
+
+        // Funkcja obsługująca kliknięcie przycisku "Wystaw fakturę" w formularzu
+        function handleInvoice() {
+            document.getElementById("rentAndInvoiceForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Zapobiegamy domyślnej akcji formularza (czyli wysłaniu żądania POST)
+
+                var propertyId = document.getElementById("property").value;
+
+
+                createInvoice(propertyId);
+
+            });
+        }
+
+        // Wywołaj funkcję obsługującą płatność po załadowaniu strony
+        handleInvoice();
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Funkcja obsługująca opłacanie płatności za media
@@ -244,6 +293,7 @@
                         const utilitiesMonths = response.months.map(mapMonth);
                         const paymentMonth = mapMonth(response.paymentMonth);
 
+                        var rentStatus = response.rentStatus;
 
                         console.log('Status opłat za media:', utilitiesStatus);
                         console.log('Kwota za media:', utilitiesAmount);
@@ -252,9 +302,13 @@
                         console.log("Opłata za miesiąc: ", paymentMonth);
                         console.log("ID płatności: ", paymentIdForProperty);
 
+                        console.log("Status opłaty za czynsz: ", rentStatus);
+
                         document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
                         document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + latestAmount;
                         document.getElementById('utilitiesId').textContent = 'ID płatności:' + paymentIdForProperty;
+
+                        document.getElementById("rentStatus").textContent = "Status opłaty czynszu przez najemcę: " + rentStatus;
 
 
                         if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana.') {

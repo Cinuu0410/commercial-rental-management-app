@@ -21,13 +21,11 @@ public class User {
         private String email;
         private String role;
 
-
-        // Dodano pole wallet do encji User
         @Column(columnDefinition = "DECIMAL(10,2) DEFAULT 0.0")
         private BigDecimal wallet;
 
         public User() {
-                // Domyślny konstruktor
+                this.wallet = BigDecimal.ZERO;
         }
 
         public User(String username, String password, String firstName, String lastName, String email, UserRole role) {
@@ -36,9 +34,8 @@ public class User {
                 this.firstName = firstName;
                 this.lastName = lastName;
                 this.email = email;
-                this.role = role.getRoleName(); // Ustawienie roli użytkownika
+                this.role = role.getRoleName();
         }
-
 
         @Transient
         private String rawPassword;

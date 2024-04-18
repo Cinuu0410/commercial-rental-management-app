@@ -37,6 +37,8 @@ public class UserController {
 
     @Autowired
     private UtilitiesPaymentService utilitiesPaymentService;
+    @Autowired
+    private RentPaymentService rentPaymentService;
 
     @GetMapping("/admin_panel")
     public String adminPanel(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -188,6 +190,9 @@ public class UserController {
         String paymentMonth = utilitiesPaymentService.getPaymentMonthForProperty(propertyId);
         Long paymentIdForProperty = utilitiesPaymentService.getPaymentIdForProperty(propertyId);
 
+
+        String rentStatus = rentPaymentService.getStatus(propertyId);
+
         result.put("status", status);
         result.put("amounts", amounts);
         result.put("months", months);
@@ -195,20 +200,44 @@ public class UserController {
         result.put("paymentMonth", paymentMonth);
         result.put("paymentIdForProperty", paymentIdForProperty);
 
+        result.put("rentStatus", rentStatus);
         return result;
     }
 
     @PostMapping("/payUtilities/{paymentId}")
-    public String payUtilities(@PathVariable Long paymentId) {
-        // Uzyskaj bieżący znacznik czasu w milisekundach
-        long currentTimeMillis = System.currentTimeMillis();
+    public String payUtilities(@PathVariable Long paymentId, HttpSession session, Model model) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+        }
 
-        // Utwórz obiekt Date na podstawie bieżącego znacznika czasu
-        Date paymentDate = new Date(currentTimeMillis);
 
-        // Wywołaj metodę usługi z paymentId i paymentDate
-        utilitiesPaymentService.updateUtilitiesStatusToPaid(paymentId, paymentDate);
+        BigDecimal walletBalance = walletService.getBalance(loggedInUser.getId());
+        BigDecimal utilitiesAmount = utilitiesPaymentService.getUtilitiesAmountForPayment(paymentId);
+        if (walletBalance == null) {
+            walletBalance = BigDecimal.ZERO;
+            session.setAttribute("walletBalance", walletBalance);
+        }
 
-        return "redirect:/user_panel"; // Przekieruj z powrotem do panelu użytkownika
+        if (walletBalance.compareTo(utilitiesAmount) >= 0) {
+            // Zaktualizuj stan portfela
+            walletService.deductFromBalance(loggedInUser, utilitiesAmount);
+
+            // Uzyskaj bieżący znacznik czasu w milisekundach
+            long currentTimeMillis = System.currentTimeMillis();
+
+            // Utwórz obiekt Date na podstawie bieżącego znacznika czasu
+            Date paymentDate = new Date(currentTimeMillis);
+
+            // Wywołaj metodę usługi do aktualizacji statusu płatności za media
+            utilitiesPaymentService.updateUtilitiesStatusToPaid(paymentId, paymentDate);
+
+            model.addAttribute("message", "Płatność zakończona pomyślnie.");
+        } else {
+            model.addAttribute("error", "Brak środków w portfelu.");
+        }
+
+        // Przekierowanie z powrotem do panelu użytkownika
+        return "redirect:/user_panel";
     }
 }

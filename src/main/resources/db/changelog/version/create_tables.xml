@@ -147,7 +147,7 @@
     </changeSet>
 
     <changeSet id="create-payment-table" author="Marcin Zaczeniuk">
-        <createTable tableName="payments">
+        <createTable tableName="rent_payments">
             <column name="payment_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -161,7 +161,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="payments"
+        <addForeignKeyConstraint baseTableName="rent_payments"
                                  baseColumnNames="rental_agreement_id"
                                  referencedTableName="rental_agreements"
                                  referencedColumnNames="agreement_id"

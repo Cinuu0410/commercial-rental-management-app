@@ -32,6 +32,15 @@
             <column name="role" value="Najemca"/>
             <column name="wallet" value="2400"/>
         </insert>
+        <insert tableName="app_user">
+            <column name="first_name" value = "Mariusz"/>
+            <column name="last_name" value = "Pudzianowski"/>
+            <column name="email" value="mariusz.p@gmail.com"/>
+            <column name="username" value="User3"/>
+            <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
+            <column name="role" value="Wynajmujacy"/>
+            <column name="wallet" value="3000"/>
+        </insert>
     </changeSet>
 
 <!--  TABELA PROPERTIES  -->
@@ -53,6 +62,12 @@
             <column name="area" value = "25"/>
             <column name="number_of_rooms" value="1"/>
             <column name="owner_id" value="2"/>
+        </insert>
+        <insert tableName="properties">
+            <column name="address" value = "Malinowa 5/3"/>
+            <column name="area" value = "45"/>
+            <column name="number_of_rooms" value="5"/>
+            <column name="owner_id" value="4"/>
         </insert>
     </changeSet>
 
@@ -76,6 +91,13 @@
             <column name="city" value = "Juchnowiec Kościelny"/>
             <column name="post_code" value = "16-101"/>
         </insert>
+        <insert tableName="landlords">
+            <column name="user_id" value="4"/>
+            <column name="phone_number" value = "666333222"/>
+            <column name="address" value = "Mickiewicza 10/5"/>
+            <column name="city" value = "Białystok"/>
+            <column name="post_code" value = "16-135"/>
+        </insert>
     </changeSet>
 
 <!--  TABELA RENTAL_AGREEMENTS  -->
@@ -97,16 +119,16 @@
     </changeSet>
 
 <!--    TABELA PAYMENTS   -->
-    <changeSet id="payments-inserts" author="Marcin Zaczeniuk">
-        <insert tableName="payments">
+    <changeSet id="rent-payments-inserts" author="Marcin Zaczeniuk">
+        <insert tableName="rent_payments">
             <column name="payment_date" value = "2024-04-10"/>
             <column name="rental_agreement_id" value = "2"/>
-            <column name="status" value = "unpaid"/>
+            <column name="status" value = "paid"/>
         </insert>
-        <insert tableName="payments">
+        <insert tableName="rent_payments">
             <column name="payment_date" value = "2024-04-15"/>
             <column name="rental_agreement_id" value = "1"/>
-            <column name="status" value = "unpaid"/>
+            <column name="status" value = "paid"/>
         </insert>
     </changeSet>
 
@@ -161,6 +183,19 @@
             <column name="status" value="paid"/>
             <column name="payment_month" value="May"/>
         </insert>
-
+        <insert tableName="utilities_payments">
+            <column name="payment_date" value = "NULL"/>
+            <column name="amount" value = "580"/>
+            <column name="property_id" value = "2"/>
+            <column name="status" value="paid"/>
+            <column name="payment_month" value="May"/>
+        </insert>
+        <insert tableName="utilities_payments">
+        <column name="payment_date" value = "NULL"/>
+        <column name="amount" value = "800"/>
+        <column name="property_id" value = "4"/>
+        <column name="status" value="unpaid"/>
+        <column name="payment_month" value="May"/>
+    </insert>
     </changeSet>
 </databaseChangeLog>

@@ -25,9 +25,7 @@ public class Property {
     @Column(name="owner_id")
     private Long ownerId;
 
-    public Property() {
-        // Domyślny konstruktor
-    }
+    public Property() {}
 
     public Property(String address, String area, int numberOfRooms, Long ownerId) {
         this.address = address;
@@ -35,6 +33,4 @@ public class Property {
         this.numberOfRooms = numberOfRooms;
         this.ownerId = ownerId;
     }
-
-    // Getters and setters
 }
