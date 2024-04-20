@@ -1,13 +1,11 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
-import com.uwb.commercialrentalmanagementapp.Model.Wallet;
 import com.uwb.commercialrentalmanagementapp.Model.User;
 import com.uwb.commercialrentalmanagementapp.Repository.UserRepository;
 import com.uwb.commercialrentalmanagementapp.Repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
 import java.math.BigDecimal;
 
 @Service

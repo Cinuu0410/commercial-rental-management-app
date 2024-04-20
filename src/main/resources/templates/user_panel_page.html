@@ -90,14 +90,17 @@
     </div>
     <div class="container">
         <div class="landlord-container">
-            <h2 class="hCenter">Zarządzanie czynszem i opłatami za media</h2>
-
-           <form method="post" id="rentAndUtilitiesForm" action="/payUtilities/">
-                <label for="property">Wybierz nieruchomość:</label>
+            <label for="property">Wybierz nieruchomość:</label>
                 <select name="property" id="property" onchange="updateUtilitiesStatus()">
                     <option value="">Wybierz nieruchomość</option>
                     <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
                 </select>
+            <div class="wallet-info">
+                    Portfel: <span th:text="${walletBalance}"></span> PLN
+            </div>
+
+            <h2 class="hCenter">Zarządzanie opłatami za media</h2>
+           <form method="post" id="rentAndUtilitiesForm" action="/payUtilities/">
                 <p id="utilitiesStatus">Status opłat za media: </p>
                 <p id="utilitiesMonth">Opłata za miesiąc: </p>
                 <p id="utilitiesId">ID płatności: </p>
@@ -105,12 +108,11 @@
                <button type="submit">Opłać</button>
             </form>
 
-            <div class="wallet-info">
-                    Portfel: <span th:text="${walletBalance}"></span> PLN
-            </div>
-
+            <h2 class="hCenter">Zarządzanie czynszem</h2>
             <form method="post" id ="rentAndInvoiceForm" action="/createInvoice">
-                <p id="rentStatus">Status opłaty czynszu przez najemcę: </p>
+<!--                <p id="rentStatus">Status opłaty czynszu przez najemcę: </p>-->
+                <p id="rentPaymentDate">Data opłacenia faktury przez najemcę: </p>
+                <p id="rentNextInvoiceIssueDate">Kolejną faktrurę dla najemcy wystaw: </p>
                 <button type="submit">Wystaw fakturę</button>
             </form>
 
@@ -293,7 +295,9 @@
                         const utilitiesMonths = response.months.map(mapMonth);
                         const paymentMonth = mapMonth(response.paymentMonth);
 
-                        var rentStatus = response.rentStatus;
+                        // var rentStatus = response.rentStatus;
+                        var rentPaymentDate = response.rentPaymentDate;
+                        var rentNextInvoiceIssueDate = response.rentNextInvoiceIssueDate;
 
                         console.log('Status opłat za media:', utilitiesStatus);
                         console.log('Kwota za media:', utilitiesAmount);
@@ -302,14 +306,17 @@
                         console.log("Opłata za miesiąc: ", paymentMonth);
                         console.log("ID płatności: ", paymentIdForProperty);
 
-                        console.log("Status opłaty za czynsz: ", rentStatus);
+                        // console.log("Status opłaty za czynsz: ", rentStatus);
+                        console.log("Data opłacenia faktury: ", rentPaymentDate);
+                        console.log("Wystawienie kolejne faktury: ", rentNextInvoiceIssueDate);
 
                         document.getElementById('utilitiesStatus').textContent = 'Status opłat za media: ' + utilitiesStatus;
                         document.getElementById('utilitiesAmount').textContent = 'Kwota za media: ' + latestAmount;
                         document.getElementById('utilitiesId').textContent = 'ID płatności:' + paymentIdForProperty;
 
-                        document.getElementById("rentStatus").textContent = "Status opłaty czynszu przez najemcę: " + rentStatus;
-
+                        // document.getElementById("rentStatus").textContent = "Status opłaty czynszu przez najemcę: " + rentStatus;
+                        document.getElementById("rentPaymentDate").textContent = "Data opłacenia faktury przez najemcę: " + rentPaymentDate;
+                        document.getElementById("rentNextInvoiceIssueDate").textContent = "Kolejną faktrurę dla najemcy wystaw: " + rentNextInvoiceIssueDate;
 
                         if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana.') {
                             document.getElementById('utilitiesMonth').textContent = 'Opłata za miesiąc: ' + paymentMonth;
@@ -353,11 +360,7 @@
     }
 
     function logout() {
-        // W tym miejscu możesz wykonać operacje związane z wylogowywaniem,
-        // np. zakończenie sesji, usuwanie atrybutu 'loggedInUser' itp.
-
-        // Następnie przekieruj użytkownika na stronę wylogowania
-        window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
+        window.location.href = "/logout";
     }
 </script>
 </body>

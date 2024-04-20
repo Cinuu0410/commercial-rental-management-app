@@ -44,6 +44,9 @@
         <span th:if="${loggedInUser}">
             <a href="/user_panel">Panel użytkownika</a>
         </span>
+        <span th:if="${role eq 'Wynajmujacy'}">
+            <a href="/taxes_page">Podatki</a>
+        </span>
         <a href="/contact_us">Kontakt</a>
         <span th:if="${role eq 'Administrator'}">
             <a href="/admin_panel">Panel administratora</a>

@@ -1,0 +1,144 @@
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rental Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/user_panel_page_style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<header>
+    <div class="top-bar">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+        <h1>
+            <span th:if="${loggedInUser}" th:text="${'Witaj, ' + loggedInUser.firstName + ' ' + loggedInUser.lastName + '!'}"></span>
+        </h1>
+        <div class="auth-buttons">
+            <span th:if="${loggedInUser}">
+                <button type="button" class="btn btn-secondary logout-button" onclick="logout()">Wyloguj się</button>
+            </span>
+            <span th:unless="${loggedInUser}">
+                <button type="button" class="btn btn-secondary login-button" onclick="redirectToLogin()">Zaloguj</button>
+                <span class="spacing"></span>
+                <button type="button" class="btn btn-secondary register-button" onclick="redirectToRegister()">Rejestracja</button>
+            </span>
+        </div>
+    </div>
+</header>
+
+<div class="toolbar-menu">
+    <div class="toolbar">
+        <div class="toolbar-top"></div>
+    </div>
+
+    <nav class="side-menu">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-times"></i> Zamknij
+        </button>
+        <a href="/main_page">Strona główna</a>
+        <span th:if="${loggedInUser}">
+            <a href="/user_panel">Panel użytkownika</a>
+        </span>
+        <span th:if="${role eq 'Wynajmujacy'}">
+            <a href="/taxes_page">Podatki</a>
+        </span>
+        <a href="/contact_us">Kontakt</a>
+        <span th:if="${role eq 'Administrator'}">
+        <a href="/admin_panel">Panel administratora</a>
+        </span>
+    </nav>
+</div>
+<div class="container">
+    <div class="landlord-container">
+        <label for="property">Wybierz nieruchomość:</label>
+        <select name="property" id="property" onchange="updatePaymentsList()">
+            <option value="">Wybierz nieruchomość</option>
+            <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
+        </select>
+    </div>
+        <h1 class="hCenter">Płatności dla wybranej nieruchomości</h1>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Numer płatności (ID)</th>
+                <th>Data płatności</th>
+                <th>Numer umowy</th>
+                <th>Status płatności</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rentPayment : ${rentPayments}">
+                <td th:text="${rentPayment.paymentId}"></td>
+                <td th:text="${rentPayment.paymentDate}"></td>
+                <td th:text="${rentPayment.rentalAgreementId}"></td>
+                <td th:text="${rentPayment.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+</div>
+<script>
+    function updatePaymentsList() {
+        var propertyId = document.getElementById("property").value;
+
+        // Wywołaj funkcję AJAX, aby pobrać nowe dane dla wybranego propertyId
+        fetch('/getRentPaymentsForPropertyId?propertyId=' + propertyId)
+            .then(response => response.json())
+            .then(data => {
+                // Zaktualizuj tabelę z nowymi danymi
+                updateTable(data);
+            });
+    }
+
+    function updateTable(rentPayments) {
+        var tableBody = document.querySelector("tbody");
+        tableBody.innerHTML = ""; // Wyczyść zawartość tabeli
+
+        rentPayments.forEach(function(rentPayment) {
+            var row = document.createElement("tr");
+
+            var paymentIdCell = document.createElement("td");
+            paymentIdCell.textContent = rentPayment.paymentId;
+            row.appendChild(paymentIdCell);
+
+            var paymentDateCell = document.createElement("td");
+            paymentDateCell.textContent = rentPayment.paymentDate;
+            row.appendChild(paymentDateCell);
+
+            var rentalAgreementIdCell = document.createElement("td");
+            rentalAgreementIdCell.textContent = rentPayment.rentalAgreementId;
+            row.appendChild(rentalAgreementIdCell);
+
+            var statusCell = document.createElement("td"); // Nowa komórka dla statusu płatności
+            statusCell.textContent = rentPayment.status;
+            row.appendChild(statusCell);
+
+            tableBody.appendChild(row);
+        });
+    }
+
+</script>
+<script>
+    function toggleMenu() {
+        var sideMenu = document.querySelector('.side-menu');
+        sideMenu.classList.toggle('open');
+    }
+
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    function redirectToRegister() {
+        window.location.href = "/register";
+    }
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+</script>
+</body>
+</html>

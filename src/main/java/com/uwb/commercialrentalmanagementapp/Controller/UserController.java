@@ -1,9 +1,7 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
-import com.uwb.commercialrentalmanagementapp.Model.Property;
-import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
-import com.uwb.commercialrentalmanagementapp.Model.User;
+import com.uwb.commercialrentalmanagementapp.Model.*;
 import com.uwb.commercialrentalmanagementapp.Service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -191,7 +187,9 @@ public class UserController {
         Long paymentIdForProperty = utilitiesPaymentService.getPaymentIdForProperty(propertyId);
 
 
-        String rentStatus = rentPaymentService.getStatus(propertyId);
+//        String rentStatus = rentPaymentService.getStatus(propertyId);
+        String rentPaymentDate = rentPaymentService.getPaymentDate(propertyId);
+        String rentNextInvoiceIssueDate = rentPaymentService.getNextInvoiceIssueDate(propertyId);
 
         result.put("status", status);
         result.put("amounts", amounts);
@@ -200,7 +198,9 @@ public class UserController {
         result.put("paymentMonth", paymentMonth);
         result.put("paymentIdForProperty", paymentIdForProperty);
 
-        result.put("rentStatus", rentStatus);
+//        result.put("rentStatus", rentStatus);
+        result.put("rentPaymentDate", rentPaymentDate);
+        result.put("rentNextInvoiceIssueDate", rentNextInvoiceIssueDate);
         return result;
     }
 
@@ -239,5 +239,58 @@ public class UserController {
 
         // Przekierowanie z powrotem do panelu użytkownika
         return "redirect:/user_panel";
+    }
+
+    @GetMapping("/taxes_page")
+    public String taxesPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+
+        if (loggedInUser != null) {
+            // Pobierz informacje o zalogowanym użytkowniku
+            Long userId = loggedInUser.getId();
+            String loggedRole = userService.getRole(userId);
+
+            if (!loggedRole.equals(UserRole.WYNAJMUJACY.getRoleName())) {
+                // Użytkownik nie ma roli wynajmujacy lub najemca, przekieruj na stronę główną
+                return "redirect:/main_page";
+            }
+
+            BigDecimal walletBalance = walletService.getBalance(loggedInUser.getId());
+            if (walletBalance == null) {
+                walletBalance = BigDecimal.ZERO;
+                session.setAttribute("walletBalance", walletBalance);
+            }
+
+            List<Property> properties = propertyService.getPropertiesForOwner(userId);
+
+            if (!properties.isEmpty()) {
+                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
+                List<RentPayment> rentPayments = rentPaymentService.getRentPaymentsForPropertyId(propertyId);
+                model.addAttribute("rentPayments", rentPayments);
+            }
+
+
+            // Dodaj informacje o zalogowanym użytkowniku do modelu
+            session.setAttribute("loggedInUser", loggedInUser);
+            session.setAttribute("role", loggedRole);
+
+            // Przekaz informacje o saldzie do modelu
+            model.addAttribute("walletBalance", walletBalance);
+            model.addAttribute("loggedInUser", loggedInUser);
+            model.addAttribute("role", loggedRole);
+            model.addAttribute("properties", properties);
+
+        } else {
+            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
+            return "redirect:/login";
+        }
+
+        return "taxes_page";
+    }
+
+    @GetMapping("/getRentPaymentsForPropertyId")
+    @ResponseBody
+    public List<RentPayment> getRentPaymentsForPropertyId(@RequestParam Long propertyId) {
+        return rentPaymentService.getRentPaymentsForPropertyId(propertyId);
     }
 }

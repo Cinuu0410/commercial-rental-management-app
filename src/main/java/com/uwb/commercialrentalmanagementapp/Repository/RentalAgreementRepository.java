@@ -11,4 +11,5 @@ public interface RentalAgreementRepository extends JpaRepository<RentalAgreement
 
     Optional<RentalAgreement> findByProperty_PropertyId(Long propertyId);
 
+
 }

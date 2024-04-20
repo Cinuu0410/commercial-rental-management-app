@@ -103,15 +103,15 @@
 <!--  TABELA RENTAL_AGREEMENTS  -->
     <changeSet id="6" author="Marcin Zaczeniuk">
         <insert tableName="rental_agreements">
-            <column name="start_date" value="2024-03-15"/>
-            <column name="end_date" value = "2025-03-14"/>
+            <column name="start_date" value="2024-03-01"/>
+            <column name="end_date" value = "2025-03-01"/>
             <column name="rent_amount" value = "650"/>
             <column name="property_id" value = "1"/>
             <column name="tenant_id" value = "1"/>
         </insert>
         <insert tableName="rental_agreements">
-            <column name="start_date" value="2024-01-10"/>
-            <column name="end_date" value = "2025-01-10"/>
+            <column name="start_date" value="2024-01-01"/>
+            <column name="end_date" value = "2025-01-01"/>
             <column name="rent_amount" value = "450"/>
             <column name="property_id" value = "3"/>
             <column name="tenant_id" value = "1"/>
@@ -121,12 +121,22 @@
 <!--    TABELA PAYMENTS   -->
     <changeSet id="rent-payments-inserts" author="Marcin Zaczeniuk">
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-04-10"/>
+            <column name="payment_date" value = "2024-03-08"/>
             <column name="rental_agreement_id" value = "2"/>
             <column name="status" value = "paid"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-04-15"/>
+            <column name="payment_date" value = "2024-01-09"/>
+            <column name="rental_agreement_id" value = "1"/>
+            <column name="status" value = "paid"/>
+        </insert>
+        <insert tableName="rent_payments">
+            <column name="payment_date" value = "2024-02-09"/>
+            <column name="rental_agreement_id" value = "1"/>
+            <column name="status" value = "paid"/>
+        </insert>
+        <insert tableName="rent_payments">
+            <column name="payment_date" value = "2024-03-09"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
         </insert>
