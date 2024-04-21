@@ -160,6 +160,12 @@
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
+            <column name="amount" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vat_paid" type = "boolean">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="rent_payments"
                                  baseColumnNames="rental_agreement_id"

@@ -17,4 +17,6 @@ public interface RentPaymentRepository extends JpaRepository<RentPayment, Long> 
     Optional<Date> findLatestPaymentDateByRentalAgreementId(@Param("rentalAgreementId") Long rentalAgreementId);
 
     List<RentPayment> findAllByRentalAgreementId(Long rentalAgreementId);
+
+    Optional<RentPayment> findByPaymentId(Long paymentId);
 }

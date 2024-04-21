@@ -61,6 +61,9 @@
             <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
         </select>
     </div>
+    <div class="wallet-info">
+        Portfel: <span th:text="${walletBalance}"></span> PLN
+    </div>
         <h1 class="hCenter">Płatności dla wybranej nieruchomości</h1>
         <table class="table table-striped">
             <thead>
@@ -69,6 +72,10 @@
                 <th>Data płatności</th>
                 <th>Numer umowy</th>
                 <th>Status płatności</th>
+                <th>Kwota płatności</th>
+                <th>Kwota podatku VAT</th>
+                <th>Czy VAT odprowadzony</th>
+                <th>Akcje</th>
             </tr>
             </thead>
             <tbody>
@@ -77,26 +84,65 @@
                 <td th:text="${rentPayment.paymentDate}"></td>
                 <td th:text="${rentPayment.rentalAgreementId}"></td>
                 <td th:text="${rentPayment.status}"></td>
+                <td th:text="${rentPayment.paymentAmount}"></td>
+                <td id="vatAmount"></td>
+                <td th:text="${rentPayment.vatPaid}"></td>
             </tr>
             </tbody>
         </table>
 </div>
 <script>
+    function payVat(paymentId) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    alert("Podatek VAT został pomyślnie opłacony.");
+                    updatePaymentsList();
+                    window.location.reload();
+                } else {
+                    alert("Wystąpił błąd podczas opłacania podatku VAT. Spróbuj ponownie później.");
+                    console.error("Błąd żądania AJAX:", xhr.status);
+                }
+            }
+        };
+        xhr.open("POST", "/payVat/" + paymentId);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(JSON.stringify({ status: "paid" }));
+    }
+
+    function handleVatPayment() {
+        document.getElementById("payVatButton").addEventListener("click", function(event) {
+            event.preventDefault();
+
+            var paymentIdString = document.getElementById("utilitiesId").textContent.trim();
+            var paymentId = parseInt(paymentIdString.replace('ID płatności:', '').trim());
+
+            if (paymentId !== '') {
+                payVat(paymentId);
+            } else {
+                alert("Wybierz płatność przed opłaceniem podatku VAT.");
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        handleVatPayment();
+    });
+
     function updatePaymentsList() {
         var propertyId = document.getElementById("property").value;
 
-        // Wywołaj funkcję AJAX, aby pobrać nowe dane dla wybranego propertyId
         fetch('/getRentPaymentsForPropertyId?propertyId=' + propertyId)
             .then(response => response.json())
             .then(data => {
-                // Zaktualizuj tabelę z nowymi danymi
                 updateTable(data);
             });
     }
 
     function updateTable(rentPayments) {
         var tableBody = document.querySelector("tbody");
-        tableBody.innerHTML = ""; // Wyczyść zawartość tabeli
+        tableBody.innerHTML = "";
 
         rentPayments.forEach(function(rentPayment) {
             var row = document.createElement("tr");
@@ -113,15 +159,40 @@
             rentalAgreementIdCell.textContent = rentPayment.rentalAgreementId;
             row.appendChild(rentalAgreementIdCell);
 
-            var statusCell = document.createElement("td"); // Nowa komórka dla statusu płatności
+            var statusCell = document.createElement("td");
             statusCell.textContent = rentPayment.status;
             row.appendChild(statusCell);
+
+            var paymentAmountCell = document.createElement("td");
+            paymentAmountCell.textContent = rentPayment.paymentAmount;
+            row.appendChild(paymentAmountCell);
+
+            var vatAmountCell = document.createElement("td");
+            var vatAmount = (parseFloat(rentPayment.paymentAmount) * 0.23).toFixed(2);
+            vatAmountCell.textContent = vatAmount;
+            row.appendChild(vatAmountCell);
+
+            var vatPaidCell = document.createElement("td");
+            vatPaidCell.textContent = rentPayment.vatPaid ? 'Tak' : 'Nie';
+            row.appendChild(vatPaidCell);
+
+            var vatButtonCell = document.createElement("td");
+            if (!rentPayment.vatPaid) {
+                var vatButton = document.createElement("button");
+                vatButton.textContent = "Odprowadź podatek VAT";
+                vatButton.id = "payVatButton";
+                vatButton.onclick = function() {
+                    payVat(rentPayment.paymentId);
+                };
+                vatButtonCell.appendChild(vatButton);
+            }
+            row.appendChild(vatButtonCell);
 
             tableBody.appendChild(row);
         });
     }
-
 </script>
+
 <script>
     function toggleMenu() {
         var sideMenu = document.querySelector('.side-menu');
@@ -142,3 +213,91 @@
 </script>
 </body>
 </html>
+<!--<script>-->
+<!--    function updatePaymentsList() {-->
+<!--        var propertyId = document.getElementById("property").value;-->
+
+<!--        // Wywołaj funkcję AJAX, aby pobrać nowe dane dla wybranego propertyId-->
+<!--        fetch('/getRentPaymentsForPropertyId?propertyId=' + propertyId)-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                // Zaktualizuj tabelę z nowymi danymi-->
+<!--                updateTable(data);-->
+<!--            });-->
+<!--    }-->
+
+<!--    function updateTable(rentPayments) {-->
+<!--        var tableBody = document.querySelector("tbody");-->
+<!--        tableBody.innerHTML = ""; // Wyczyść zawartość tabeli-->
+
+<!--        rentPayments.forEach(function(rentPayment) {-->
+<!--            var row = document.createElement("tr");-->
+
+<!--            var paymentIdCell = document.createElement("td");-->
+<!--            paymentIdCell.textContent = rentPayment.paymentId;-->
+<!--            row.appendChild(paymentIdCell);-->
+
+<!--            var paymentDateCell = document.createElement("td");-->
+<!--            paymentDateCell.textContent = rentPayment.paymentDate;-->
+<!--            row.appendChild(paymentDateCell);-->
+
+<!--            var rentalAgreementIdCell = document.createElement("td");-->
+<!--            rentalAgreementIdCell.textContent = rentPayment.rentalAgreementId;-->
+<!--            row.appendChild(rentalAgreementIdCell);-->
+
+<!--            var statusCell = document.createElement("td"); // Nowa komórka dla statusu płatności-->
+<!--            statusCell.textContent = rentPayment.status;-->
+<!--            row.appendChild(statusCell);-->
+
+<!--            var paymentAmountCell = document.createElement("td");-->
+<!--            paymentAmountCell.textContent = rentPayment.paymentAmount;-->
+<!--            row.appendChild(paymentAmountCell);-->
+
+<!--            var vatAmountCell = document.createElement("td"); // Komórka dla kwoty podatku VAT-->
+<!--            var vatAmount = (parseFloat(rentPayment.paymentAmount) * 0.23).toFixed(2); // Obliczenie kwoty podatku VAT-->
+<!--            vatAmountCell.textContent = vatAmount;-->
+<!--            row.appendChild(vatAmountCell);-->
+
+<!--            var vatPaidCell = document.createElement("td"); // Komórka dla "VAT paid"-->
+<!--            vatPaidCell.textContent = rentPayment.vatPaid ? 'Tak' : 'Nie'; // Jeśli vatPaid jest true, wyświetl "Tak", w przeciwnym razie "Nie"-->
+<!--            row.appendChild(vatPaidCell);-->
+
+<!--            var vatButtonCell = document.createElement("td"); // Komórka dla przycisku "Odprowadź podatek VAT"-->
+<!--            if (!rentPayment.vatPaid) { // Jeśli VAT nie został jeszcze odprowadzony-->
+<!--                var vatButton = document.createElement("button");-->
+<!--                vatButton.textContent = "Odprowadź podatek VAT";-->
+<!--                vatButton.onclick = function() {-->
+<!--                    payVat(rentPayment.paymentId);-->
+<!--                };-->
+<!--                vatButtonCell.appendChild(vatButton);-->
+<!--            }-->
+<!--            row.appendChild(vatButtonCell);-->
+
+<!--            tableBody.appendChild(row);-->
+<!--        });-->
+<!--    }-->
+
+
+<!--    function payVat(paymentId) {-->
+<!--        fetch('/payVat/' + paymentId, {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            }-->
+<!--        })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                if (data.error) {-->
+<!--                    alert(data.error);-->
+<!--                } else {-->
+<!--                    // Pomyślnie opłacono płatność, możesz wykonać odpowiednie działania-->
+<!--                    alert(data.message)-->
+<!--                    updatePaymentsList(); // Odśwież listę po udanej płatności VAT-->
+<!--                }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--            });-->
+<!--    }-->
+
+<!--</script>-->

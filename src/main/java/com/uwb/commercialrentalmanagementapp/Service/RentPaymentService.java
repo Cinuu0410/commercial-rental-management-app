@@ -7,6 +7,7 @@ import com.uwb.commercialrentalmanagementapp.Repository.RentalAgreementRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -136,4 +137,24 @@ public class RentPaymentService {
         return rentPaymentRepository.findAllByRentalAgreementId(propertyId);
     }
 
+    public RentPayment getRentPaymentById(Long paymentId) {
+        return rentPaymentRepository.findByPaymentId(paymentId)
+                .orElse(null);
+    }
+
+    public BigDecimal calculateVatAmount(BigDecimal paymentAmount) {
+        // Zakładam, że stawka VAT wynosi 23%
+        BigDecimal vatRate = new BigDecimal("0.23");
+
+        // Obliczanie kwoty VAT
+        return paymentAmount.multiply(vatRate);
+    }
+
+    public void updateVatPaidStatus(Long paymentId) {
+        RentPayment rentPayment = rentPaymentRepository.findByPaymentId(paymentId)
+                .orElseThrow(() -> new IllegalArgumentException("Rent payment not found for paymentId: " + paymentId));
+
+        rentPayment.setVatPaid(true);
+        rentPaymentRepository.save(rentPayment);
+    }
 }

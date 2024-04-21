@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -245,13 +244,15 @@ public class UserController {
     public String taxesPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
-        if (loggedInUser != null) {
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+        }
             // Pobierz informacje o zalogowanym użytkowniku
             Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.WYNAJMUJACY.getRoleName())) {
-                // Użytkownik nie ma roli wynajmujacy lub najemca, przekieruj na stronę główną
+                // Użytkownik nie ma roli wynajmujacy przekieruj na stronę główną
                 return "redirect:/main_page";
             }
 
@@ -263,11 +264,11 @@ public class UserController {
 
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
-            if (!properties.isEmpty()) {
-                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
-                List<RentPayment> rentPayments = rentPaymentService.getRentPaymentsForPropertyId(propertyId);
-                model.addAttribute("rentPayments", rentPayments);
-            }
+//            if (!properties.isEmpty()) {
+//                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
+//                List<RentPayment> rentPayments = rentPaymentService.getRentPaymentsForPropertyId(propertyId);
+//                model.addAttribute("rentPayments", rentPayments);
+//            }
 
 
             // Dodaj informacje o zalogowanym użytkowniku do modelu
@@ -280,17 +281,8 @@ public class UserController {
             model.addAttribute("role", loggedRole);
             model.addAttribute("properties", properties);
 
-        } else {
-            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
-            return "redirect:/login";
-        }
-
         return "taxes_page";
     }
 
-    @GetMapping("/getRentPaymentsForPropertyId")
-    @ResponseBody
-    public List<RentPayment> getRentPaymentsForPropertyId(@RequestParam Long propertyId) {
-        return rentPaymentService.getRentPaymentsForPropertyId(propertyId);
-    }
+
 }

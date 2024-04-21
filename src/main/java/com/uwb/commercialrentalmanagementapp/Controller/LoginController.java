@@ -20,7 +20,7 @@ public class LoginController {
                         RedirectAttributes redirectAttributes, HttpSession session) {
         if (userService.authenticate(username, password)) {
             User loggedInUser = userService.getUserByUsername(username);
-            Long userId = Long.valueOf(loggedInUser.getId());
+            Long userId = loggedInUser.getId();
 
             // Pobierz rolę użytkownika na podstawie ID
             String loggedRole = userService.getRole(userId);

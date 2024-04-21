@@ -3,6 +3,7 @@ package com.uwb.commercialrentalmanagementapp.Model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -23,6 +24,12 @@ public class RentPayment {
 
     @Column(name = "status")
     private String status;
+
+    @Column(name = "amount")
+    private BigDecimal paymentAmount;
+
+    @Column(name = "vat_paid")
+    private Boolean vatPaid;
 
     public RentPayment() {}
 }
