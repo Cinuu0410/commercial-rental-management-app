@@ -13,7 +13,7 @@ public interface RentPaymentRepository extends JpaRepository<RentPayment, Long> 
 
     Optional<RentPayment> findByRentalAgreementId(Long rentalAgreementId);
 
-    @Query("SELECT rp.paymentDate FROM RentPayment rp WHERE rp.rentalAgreementId = :rentalAgreementId AND rp.paymentId = (SELECT MAX(rp2.paymentId) FROM RentPayment rp2 WHERE rp2.rentalAgreementId = :rentalAgreementId AND rp2.status = 'paid')")
+    @Query("SELECT rp.issueDate FROM RentPayment rp WHERE rp.rentalAgreementId = :rentalAgreementId AND rp.paymentId = (SELECT MAX(rp2.paymentId) FROM RentPayment rp2 WHERE rp2.rentalAgreementId = :rentalAgreementId AND rp2.status = 'paid')")
     Optional<Date> findLatestPaymentDateByRentalAgreementId(@Param("rentalAgreementId") Long rentalAgreementId);
 
     List<RentPayment> findAllByRentalAgreementId(Long rentalAgreementId);

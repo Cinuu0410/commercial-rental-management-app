@@ -17,7 +17,7 @@ public class RentPayment {
     private Long paymentId;
 
     @Column(name = "payment_date")
-    private Date paymentDate;
+    private Date issueDate;
 
     @Column(name = "rental_agreement_id")
     private Long rentalAgreementId;

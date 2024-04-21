@@ -99,16 +99,18 @@ public class RentPaymentService {
         }
     }
 
-    public RentPayment createInvoice(Long propertyId) {
+    public void createInvoice(Long propertyId) {
         RentalAgreement rentalAgreement = rentalAgreementRepository.findByProperty_PropertyId(propertyId)
                 .orElseThrow(() -> new IllegalArgumentException("Rental agreement not found for propertyId: " + propertyId));
 
         RentPayment rentPayment = new RentPayment();
-        rentPayment.setPaymentDate(new Date());
+        rentPayment.setIssueDate(new Date());
         rentPayment.setRentalAgreementId(rentalAgreement.getAgreementId());
         rentPayment.setStatus("unpaid");
+        rentPayment.setPaymentAmount(rentalAgreement.getRentAmount());
+        rentPayment.setVatPaid(false);
 
-        return rentPaymentRepository.save(rentPayment);
+        rentPaymentRepository.save(rentPayment);
     }
 
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" th:href="@{/css/user_panel_page_style.css}">
+    <link rel="stylesheet" th:href="@{/css/taxes_page_style.css}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -55,23 +55,23 @@
 </div>
 <div class="container">
     <div class="landlord-container">
-        <label for="property">Wybierz nieruchomość:</label>
+        <label class = "property-and-wallet-style" for="property">Wybierz nieruchomość:</label>
         <select name="property" id="property" onchange="updatePaymentsList()">
             <option value="">Wybierz nieruchomość</option>
             <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
         </select>
     </div>
-    <div class="wallet-info">
-        Portfel: <span th:text="${walletBalance}"></span> PLN
+    <div class="property-and-wallet-style">
+        <p>Portfel: <span th:text="${walletBalance}"></span> PLN</p>
     </div>
         <h1 class="hCenter">Płatności dla wybranej nieruchomości</h1>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Numer płatności (ID)</th>
-                <th>Data płatności</th>
+                <th>ID płatności</th>
+                <th>Data wystawienia faktury</th>
                 <th>Numer umowy</th>
-                <th>Status płatności</th>
+                <th>Status płatności(Najemca opłacił fakturę)</th>
                 <th>Kwota płatności</th>
                 <th>Kwota podatku VAT</th>
                 <th>Czy VAT odprowadzony</th>
@@ -81,7 +81,7 @@
             <tbody>
             <tr th:each="rentPayment : ${rentPayments}">
                 <td th:text="${rentPayment.paymentId}"></td>
-                <td th:text="${rentPayment.paymentDate}"></td>
+                <td th:text="${rentPayment.issueDate}"></td>
                 <td th:text="${rentPayment.rentalAgreementId}"></td>
                 <td th:text="${rentPayment.status}"></td>
                 <td th:text="${rentPayment.paymentAmount}"></td>
@@ -92,6 +92,11 @@
         </table>
 </div>
 <script>
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    }
+
     function payVat(paymentId) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -152,7 +157,7 @@
             row.appendChild(paymentIdCell);
 
             var paymentDateCell = document.createElement("td");
-            paymentDateCell.textContent = rentPayment.paymentDate;
+            paymentDateCell.textContent = formatDate(rentPayment.issueDate); // Użyj formatDate
             row.appendChild(paymentDateCell);
 
             var rentalAgreementIdCell = document.createElement("td");
@@ -160,7 +165,7 @@
             row.appendChild(rentalAgreementIdCell);
 
             var statusCell = document.createElement("td");
-            statusCell.textContent = rentPayment.status;
+            statusCell.textContent = rentPayment.status === 'unpaid' ? 'Nieopłacone' : 'Opłacone';
             row.appendChild(statusCell);
 
             var paymentAmountCell = document.createElement("td");
