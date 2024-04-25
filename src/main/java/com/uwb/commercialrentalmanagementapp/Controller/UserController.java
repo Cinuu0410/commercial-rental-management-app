@@ -187,6 +187,13 @@ public class UserController {
 
 
 //        String rentStatus = rentPaymentService.getStatus(propertyId);
+        //Do faktury:
+        String invoiceFirstLastNameLandlord = rentPaymentService.getFirstAndLastNameOfLandlord(propertyId);
+        String invoiceAddressLandlord = rentPaymentService.getAddressOfLandlord(propertyId);
+        String invoiceFirstLastNameTenant = rentPaymentService.getFirstAndLastNameOfTenant(propertyId);
+        String invoiceAddressTenant = rentPaymentService.getAddressOfTenant(propertyId);
+        BigDecimal invoiceRentAmount = rentPaymentService.getRentAmount(propertyId);
+
         String rentPaymentDate = rentPaymentService.getPaymentDate(propertyId);
         String rentNextInvoiceIssueDate = rentPaymentService.getNextInvoiceIssueDate(propertyId);
 
@@ -198,6 +205,13 @@ public class UserController {
         result.put("paymentIdForProperty", paymentIdForProperty);
 
 //        result.put("rentStatus", rentStatus);
+        //Do faktury:
+        result.put("invoiceFirstLastNameLandlord", invoiceFirstLastNameLandlord);
+        result.put("invoiceAddressLandlord", invoiceAddressLandlord);
+        result.put("invoiceFirstLastNameTenant", invoiceFirstLastNameTenant);
+        result.put("invoiceAddressTenant", invoiceAddressTenant);
+        result.put("invoiceRentAmount", invoiceRentAmount);
+
         result.put("rentPaymentDate", rentPaymentDate);
         result.put("rentNextInvoiceIssueDate", rentNextInvoiceIssueDate);
         return result;

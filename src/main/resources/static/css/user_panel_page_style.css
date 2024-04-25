@@ -136,3 +136,58 @@ h1 {
     font-family: "Arial", sans-serif;
     font-size: 17px;
 }
+
+
+.invoice-style p, .utilities-style p, .wallet-info {
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 300ms ease-out;
+    font: normal normal 19px/1.2 "proxima-nova";
+    letter-spacing: 0px;
+    width: 420px;
+    margin-top: 10px;
+}
+
+.invoice-style p:hover, .utilities-style p:hover, .wallet-info:hover {
+    box-shadow: 2px 2px 26px 16px rgba(7, 180, 237, 0.3);
+}
+
+.label-style{
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 300ms ease-out;
+    font: normal normal 19px/1.2 "proxima-nova";
+    letter-spacing: 0px;
+    margin-top: 10px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.label-style:hover {
+     box-shadow: 2px 2px 26px 16px rgba(7, 180, 237, 0.3);
+ }
+
+#createInvoiceButton, #payUtilitiesButton{
+    font-family: Roboto, sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    color: black;
+    background: linear-gradient(90deg, #a5c4e0 0%, #6dc7e3 100%);
+    padding: 10px 30px;
+    border: 2px solid #0066cc;
+    box-shadow: rgb(0, 0, 0) 0px 0px 0px 0px;
+    border-radius: 50px;
+    transition : 396ms;
+    transform: translateY(0);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+}
+
+#createInvoiceButton:hover, #payUtilitiesButton:hover{
+    transition : 396ms;
+    padding: 10px 50px;
+    transform : translateY(-0px);
+    background: linear-gradient(90deg, #a5c4e0 0%, #6dc7e3 100%);
+    color: #0066cc;
+    border: solid 2px #0066cc;
+}

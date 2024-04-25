@@ -55,14 +55,14 @@
 </div>
 <div class="container">
     <div class="landlord-container">
-        <label class = "property-and-wallet-style" for="property">Wybierz nieruchomość:</label>
+        <label class = "property-and-wallet-style" for="property"><b>Wybierz nieruchomość: </b></label>
         <select name="property" id="property" onchange="updatePaymentsList()">
             <option value="">Wybierz nieruchomość</option>
             <option th:each="property : ${properties}" th:value="${property.propertyId}" th:text="${property.address}"></option>
         </select>
     </div>
     <div class="property-and-wallet-style">
-        <p>Portfel: <span th:text="${walletBalance}"></span> PLN</p>
+        <p><b>Portfel: </b><span th:text="${walletBalance}"></span> PLN</p>
     </div>
         <h1 class="hCenter">Płatności dla wybranej nieruchomości</h1>
         <table class="table table-striped">

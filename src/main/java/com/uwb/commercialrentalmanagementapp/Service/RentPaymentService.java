@@ -1,9 +1,7 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
-import com.uwb.commercialrentalmanagementapp.Model.RentPayment;
-import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
-import com.uwb.commercialrentalmanagementapp.Repository.RentPaymentRepository;
-import com.uwb.commercialrentalmanagementapp.Repository.RentalAgreementRepository;
+import com.uwb.commercialrentalmanagementapp.Model.*;
+import com.uwb.commercialrentalmanagementapp.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +20,19 @@ public class RentPaymentService {
 
     private final RentPaymentRepository rentPaymentRepository;
     private final RentalAgreementRepository rentalAgreementRepository;
+    private final UserRepository userRepository;
+    private final PropertyRepository propertyRepository;
+    private final LandlordRepository landlordRepository;
+    private final TenantRepository tenantRepository;
 
     @Autowired
-    public RentPaymentService(RentPaymentRepository rentPaymentRepository, RentalAgreementRepository rentalAgreementRepository) {
+    public RentPaymentService(RentPaymentRepository rentPaymentRepository, RentalAgreementRepository rentalAgreementRepository, UserRepository userRepository, PropertyRepository propertyRepository, LandlordRepository landlordRepository, TenantRepository tenantRepository) {
         this.rentPaymentRepository = rentPaymentRepository;
         this.rentalAgreementRepository = rentalAgreementRepository;
+        this.userRepository = userRepository;
+        this.propertyRepository = propertyRepository;
+        this.landlordRepository = landlordRepository;
+        this.tenantRepository = tenantRepository;
     }
 
     public String getStatus(Long propertyId) {
@@ -158,5 +164,73 @@ public class RentPaymentService {
 
         rentPayment.setVatPaid(true);
         rentPaymentRepository.save(rentPayment);
+    }
+
+    public String getFirstAndLastNameOfLandlord(Long propertyId) {
+        // Pobierz property na podstawie propertyId
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono nieruchomości o podanym ID"));
+
+        // Pobierz ownera na podstawie owner_id z property
+        User owner = userRepository.findById(property.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono właściciela nieruchomości o podanym ID"));
+
+        // Zwróć imię i nazwisko właściciela
+        return owner.getFirstName() + " " + owner.getLastName();
+    }
+
+    public String getAddressOfLandlord(Long propertyId) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono nieruchomości o podanym ID"));
+
+        System.out.println("Owner ID from Property: " + property.getOwnerId()); // Dodaj to logowanie
+
+        // Znajdź właściciela na podstawie user_id
+        User user = userRepository.findById(property.getOwnerId())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono użytkownika w tabeli USER_APP o podanym ID"));
+
+        // Znajdź właściciela na podstawie user_id z USER_APP
+        Landlord landlord = landlordRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Nie znaleziono właściciela nieruchomości w tabeli landlords o podanym USER_ID"));
+
+        System.out.println("Landlord Address: " + landlord.getAddress()); // Dodaj to logowanie
+
+        return landlord.getAddress() + ", " + landlord.getPostCode() + " " + landlord.getCity();
+    }
+
+    public String getFirstAndLastNameOfTenant(Long propertyId) {
+        RentalAgreement rentalAgreement = rentalAgreementRepository.findByProperty_PropertyId(propertyId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental agreement not found for propertyId: " + propertyId));
+        System.out.println("Rental Agreement: " + rentalAgreement);
+
+        Tenant tenant = rentalAgreement.getTenant(); // Pobierz obiekt Tenant z RentalAgreement
+        Long tenantId = tenant.getTenantId(); // Pobierz id Tenant z obiektu Tenant
+        System.out.println("Tenant ID from Property: " + tenantId);
+
+        Tenant actualTenant = tenantRepository.findById(tenantId) // Użyj instancji tenantRepository
+                .orElseThrow(() -> new RuntimeException("Tenant not found for tenantId: " + tenantId));
+
+        User appUser = userRepository.findById(actualTenant.getUserId()) // Użyj user_id z actualTenant
+                .orElseThrow(() -> new RuntimeException("AppUser not found for userId: " + actualTenant.getUserId()));
+
+        return appUser.getFirstName() + " " + appUser.getLastName();
+    }
+
+    public String getAddressOfTenant(Long propertyId) {
+        RentalAgreement rentalAgreement = rentalAgreementRepository.findByProperty_PropertyId(propertyId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental agreement not found for propertyId: " + propertyId));
+        System.out.println("Rental Agreement: " + rentalAgreement);
+
+        Tenant tenant = rentalAgreement.getTenant(); // Pobierz obiekt Tenant z RentalAgreement
+
+        return tenant.getAddress() + ", " + tenant.getPostCode() + " " + tenant.getCity();
+    }
+
+    public BigDecimal getRentAmount(Long propertyId) {
+        RentalAgreement rentalAgreement = rentalAgreementRepository.findByProperty_PropertyId(propertyId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental agreement not found for propertyId: " + propertyId));
+
+        System.out.println(rentalAgreement.getRentAmount());
+        return rentalAgreement.getRentAmount();
     }
 }

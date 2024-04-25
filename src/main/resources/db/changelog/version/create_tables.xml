@@ -50,6 +50,7 @@
             </column>
         </createTable>
 
+
         <createTable tableName="tenants">
             <column name="tenant_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -110,6 +111,16 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_landlord_to_user_id"/>
     </changeSet>
+
+    <!-- Dodanie klucza obcego do tabeli nieruchomości łączącego z tabelą użytkowników (APP_USER) -->
+    <changeSet id="add-foreign-key-to-properties-table" author="Marcin Zaczeniuk">
+        <addForeignKeyConstraint baseTableName="PROPERTIES"
+                                 baseColumnNames="owner_id"
+                                 referencedTableName="APP_USER"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_owner_to_user_id"/>
+    </changeSet>
+
 
     <changeSet id="5" author="Marcin Zaczeniuk">
         <createTable tableName="rental_agreements">
