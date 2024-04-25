@@ -14,6 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RentPaymentService {
@@ -62,7 +63,7 @@ public class RentPaymentService {
                 return "brak umowy najmu dla danej nieruchomości";
             }
             // jeśli wystąpi inny błąd, możesz go tutaj obsłużyć
-            return "Wystąpił błąd: " + e.getMessage();
+            return "Wystąpił błąd";
         }
     }
 
@@ -96,12 +97,12 @@ public class RentPaymentService {
             }
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("Rent payment not found")) {
-                return "brak rent payment dla danej nieruchomości";
+                return "brak historii płatności dla danej nieruchomości";
             } else if (e.getMessage().contains("Rental agreement not found")) {
                 return "brak umowy najmu dla danej nieruchomości";
             }
             // jeśli wystąpi inny błąd, możesz go tutaj obsłużyć
-            return "Wystąpił błąd: " + e.getMessage();
+            return "Wystąpił błąd";
         }
     }
 
@@ -132,7 +133,7 @@ public class RentPaymentService {
             return nextInvoiceIssueDate.format(formatter);
         } catch (DateTimeParseException e) {
             if (e.getMessage().contains("Rent payment not found")) {
-                return "brak rent payment dla danej nieruchomości";
+                return "brak historii płatności dla danej nieruchomości";
             } else if (e.getMessage().contains("Rental agreement not found")) {
                 return "brak umowy najmu dla danej nieruchomości";
             }

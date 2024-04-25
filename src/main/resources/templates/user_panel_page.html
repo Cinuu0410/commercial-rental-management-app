@@ -126,9 +126,9 @@
                     <p><b><i>Dane nabywcy (najemcy)</i></b></p>
                     <p id="invoiceFirstLastNameTenant"><b>Imię i nazwisko: </b></p>
                     <p id="invoiceAddressTenant"><b>Adres: </b></p>
-                    <p><b>Nazwa usługi: </b>Czynsz najmu za <span id="nameOfService"></span></p>
+                    <p><b>Nazwa usługi: </b><span id="nameOfService"></span></p>
                     <p id="invoiceRentAmount"><b>Cena usługi: </b></p>
-                    <p><b>Forma płatności: </b>Zasilenie portfela wynajmującego w aplikacji RentManager</p>
+                    <p id="invoicePaymentMethod"><b>Forma płatności: </b></p>
                     <p><b>Termin zapłaty: </b><span id="paymentDeadline"></span></p>
                     <p id="rentPaymentDate">Data opłacenia faktury przez najemcę: </p>
                     <p id="rentNextInvoiceIssueDate">Kolejną faktrurę dla najemcy wystaw: </p>
@@ -155,8 +155,7 @@
         return formattedDay + '.' + formattedMonth + '.' + formattedYear;
     }
 
-    // Ustaw ostatni dzień miesiąca + rok w elemencie o id "saleDate"
-    document.getElementById("saleDate").textContent = getLastDayOfMonth();
+
 
     function getCurrentMonthAndYear() {
         var months = [
@@ -166,11 +165,10 @@
         var today = new Date();
         var currentMonth = months[today.getMonth()];
         var currentYear = today.getFullYear();
-        return currentMonth + ' ' + currentYear;
+        return "Czynsz najmu za " + currentMonth + ' ' + currentYear;
     }
 
-    // Ustaw nazwę aktualnego miesiąca i roku w elemencie o id "nameOfService"
-    document.getElementById("nameOfService").textContent = getCurrentMonthAndYear();
+
 
     function getPaymentDeadline() {
         var today = new Date();
@@ -194,8 +192,7 @@
         return formattedDay + '.' + formattedMonth + '.' + formattedYear;
     }
 
-    // Ustaw termin zapłaty w elemencie o id "paymentDeadline"
-    document.getElementById("paymentDeadline").textContent = getPaymentDeadline();
+
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -378,6 +375,13 @@
                         var invoiceFirstLastNameTenant = response.invoiceFirstLastNameTenant;
                         var invoiceAddressTenant = response.invoiceAddressTenant;
                         var invoiceRentAmount = response.invoiceRentAmount;
+                        // Ustaw ostatni dzień miesiąca + rok w elemencie o id "saleDate"
+                        document.getElementById("saleDate").textContent = getLastDayOfMonth();
+                        // Ustaw nazwę aktualnego miesiąca i roku w elemencie o id "nameOfService"
+                        document.getElementById("nameOfService").textContent = getCurrentMonthAndYear();
+                        // Ustaw termin zapłaty w elemencie o id "paymentDeadline"
+                        document.getElementById("paymentDeadline").textContent = getPaymentDeadline();
+                        document.getElementById("invoicePaymentMethod").innerHTML = "<b>Forma płatności: </b>Zasilenie portfela wynajmującego w aplikacji RentManager";
 
                         var rentPaymentDate = response.rentPaymentDate;
                         var rentNextInvoiceIssueDate = response.rentNextInvoiceIssueDate;

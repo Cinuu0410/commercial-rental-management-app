@@ -19,4 +19,5 @@ public interface RentPaymentRepository extends JpaRepository<RentPayment, Long> 
     List<RentPayment> findAllByRentalAgreementId(Long rentalAgreementId);
 
     Optional<RentPayment> findByPaymentId(Long paymentId);
+
 }

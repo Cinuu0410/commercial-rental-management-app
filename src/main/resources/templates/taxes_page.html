@@ -91,6 +91,17 @@
             </tbody>
         </table>
 </div>
+
+<div class="container">
+    <h1 class="hCenter">Rozliczanie podatku dochodowego</h1>
+    <p>Szanowny Właścicelu/Właścicielko lokalu!:<br>"W latach 2018-2024 r. stawka ryczałtowego podatku od przychodów z czynszu najmu wynosi 8,5%
+        pod warunkiem, że jego wartość nie przekracza 100.000 zł. Po przekroczeniu tej kwoty, stawka rośnie do 12,5%.
+        Wyjątkiem jest sytuacja obejmująca lata 2023 - 2024 dotycząca najmu małżonków,
+        którzy złożyli wniosek o opodatkowanie całości przychodów z najmu u jednego z nich.
+        Wówczas limit ten u tego małżonka wynosi 200.000 zł."<br>Źródło: <a href="https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/">https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/</a> [dostęp 25.04.2024]</p>
+    <p id="totalRevenue">Łączna suma przychodów ze wszystkich nieruchomości: </p>
+    <p id="percentageRate">Stawka procentowa ryczałtu: </p>
+</div>
 <script>
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -133,6 +144,8 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         handleVatPayment();
+        updateTotalRevenue();
+        updatePercentageRate();
     });
 
     function updatePaymentsList() {
@@ -196,6 +209,32 @@
             tableBody.appendChild(row);
         });
     }
+
+    function updateTotalRevenue() {
+        fetch('/getTotalRevenueForAllProperties')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Wystąpił błąd podczas pobierania danych');
+                }
+                return response.json();
+            })
+            .then(totalRevenue => {
+                console.log('Odebrane dane:', totalRevenue); // Dodaj ten log
+                // Ustaw wartość w elemencie HTML
+                document.getElementById("totalRevenue").textContent = "Łączna suma przychodów ze wszystkich nieruchomości: " + totalRevenue.toFixed(2) + " PLN";
+
+                // Aktualizuj stawkę procentową
+                updatePercentageRate(totalRevenue);
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+            });
+    }
+
+    function updatePercentageRate(totalRevenue) {
+        var percentageRate = totalRevenue <= 100000 ? '8,5%' : '12,5%';
+        document.getElementById("percentageRate").textContent = "Stawka procentowa ryczałtu: " + percentageRate;
+    }
 </script>
 
 <script>
@@ -218,91 +257,3 @@
 </script>
 </body>
 </html>
-<!--<script>-->
-<!--    function updatePaymentsList() {-->
-<!--        var propertyId = document.getElementById("property").value;-->
-
-<!--        // Wywołaj funkcję AJAX, aby pobrać nowe dane dla wybranego propertyId-->
-<!--        fetch('/getRentPaymentsForPropertyId?propertyId=' + propertyId)-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                // Zaktualizuj tabelę z nowymi danymi-->
-<!--                updateTable(data);-->
-<!--            });-->
-<!--    }-->
-
-<!--    function updateTable(rentPayments) {-->
-<!--        var tableBody = document.querySelector("tbody");-->
-<!--        tableBody.innerHTML = ""; // Wyczyść zawartość tabeli-->
-
-<!--        rentPayments.forEach(function(rentPayment) {-->
-<!--            var row = document.createElement("tr");-->
-
-<!--            var paymentIdCell = document.createElement("td");-->
-<!--            paymentIdCell.textContent = rentPayment.paymentId;-->
-<!--            row.appendChild(paymentIdCell);-->
-
-<!--            var paymentDateCell = document.createElement("td");-->
-<!--            paymentDateCell.textContent = rentPayment.paymentDate;-->
-<!--            row.appendChild(paymentDateCell);-->
-
-<!--            var rentalAgreementIdCell = document.createElement("td");-->
-<!--            rentalAgreementIdCell.textContent = rentPayment.rentalAgreementId;-->
-<!--            row.appendChild(rentalAgreementIdCell);-->
-
-<!--            var statusCell = document.createElement("td"); // Nowa komórka dla statusu płatności-->
-<!--            statusCell.textContent = rentPayment.status;-->
-<!--            row.appendChild(statusCell);-->
-
-<!--            var paymentAmountCell = document.createElement("td");-->
-<!--            paymentAmountCell.textContent = rentPayment.paymentAmount;-->
-<!--            row.appendChild(paymentAmountCell);-->
-
-<!--            var vatAmountCell = document.createElement("td"); // Komórka dla kwoty podatku VAT-->
-<!--            var vatAmount = (parseFloat(rentPayment.paymentAmount) * 0.23).toFixed(2); // Obliczenie kwoty podatku VAT-->
-<!--            vatAmountCell.textContent = vatAmount;-->
-<!--            row.appendChild(vatAmountCell);-->
-
-<!--            var vatPaidCell = document.createElement("td"); // Komórka dla "VAT paid"-->
-<!--            vatPaidCell.textContent = rentPayment.vatPaid ? 'Tak' : 'Nie'; // Jeśli vatPaid jest true, wyświetl "Tak", w przeciwnym razie "Nie"-->
-<!--            row.appendChild(vatPaidCell);-->
-
-<!--            var vatButtonCell = document.createElement("td"); // Komórka dla przycisku "Odprowadź podatek VAT"-->
-<!--            if (!rentPayment.vatPaid) { // Jeśli VAT nie został jeszcze odprowadzony-->
-<!--                var vatButton = document.createElement("button");-->
-<!--                vatButton.textContent = "Odprowadź podatek VAT";-->
-<!--                vatButton.onclick = function() {-->
-<!--                    payVat(rentPayment.paymentId);-->
-<!--                };-->
-<!--                vatButtonCell.appendChild(vatButton);-->
-<!--            }-->
-<!--            row.appendChild(vatButtonCell);-->
-
-<!--            tableBody.appendChild(row);-->
-<!--        });-->
-<!--    }-->
-
-
-<!--    function payVat(paymentId) {-->
-<!--        fetch('/payVat/' + paymentId, {-->
-<!--            method: 'POST',-->
-<!--            headers: {-->
-<!--                'Content-Type': 'application/json'-->
-<!--            }-->
-<!--        })-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                if (data.error) {-->
-<!--                    alert(data.error);-->
-<!--                } else {-->
-<!--                    // Pomyślnie opłacono płatność, możesz wykonać odpowiednie działania-->
-<!--                    alert(data.message)-->
-<!--                    updatePaymentsList(); // Odśwież listę po udanej płatności VAT-->
-<!--                }-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error:', error);-->
-<!--            });-->
-<!--    }-->
-
-<!--</script>-->
