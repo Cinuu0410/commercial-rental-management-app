@@ -1,20 +1,24 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 
+import com.uwb.commercialrentalmanagementapp.Model.Property;
 import com.uwb.commercialrentalmanagementapp.Model.RentPayment;
 import com.uwb.commercialrentalmanagementapp.Model.User;
 import com.uwb.commercialrentalmanagementapp.Service.RentPaymentService;
 import com.uwb.commercialrentalmanagementapp.Service.WalletService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -84,6 +88,6 @@ public class RentPaymentController {
         // Przekierowanie z powrotem do strony z podatkami
         return "redirect:/taxes_page";
     }
-
 }
+
 

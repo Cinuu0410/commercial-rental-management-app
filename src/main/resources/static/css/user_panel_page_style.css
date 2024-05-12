@@ -191,3 +191,47 @@ h1 {
     color: #0066cc;
     border: solid 2px #0066cc;
 }
+
+hr {
+    background-color: #fff;
+    padding: 0;
+    margin: 50px;
+}
+
+hr.hr-1 {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+#utilitiesId {
+    display: none;
+}
+
+#rentAndInvoiceForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#rentAndInvoiceForm label {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 10px; /* Dodajemy margines, aby oddzielić etykiety */
+    max-width: 200px; /* Maksymalna szerokość etykiety */
+}
+
+#rentAndInvoiceForm input[type="text"] {
+    margin-left: 10px; /* Dodajemy margines między etykietą a polem tekstowym */
+}
+
+#buyerInfoContainer, #sellerInfoContainer {
+    border: 1px solid #6dc7e3; /* Grubość i kolor ramki */
+    border-radius: 5px; /* Zaokrąglenie rogów */
+    padding: 10px; /* Wewnętrzny odstęp */
+    margin-bottom: 20px; /* Margines dolny */
+}
+
+#buyerInfoContainer h3, #sellerInfoContainer h3 {
+    margin-top: 0; /* Zerowanie górnego marginesu dla nagłówka */
+}

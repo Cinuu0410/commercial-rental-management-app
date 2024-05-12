@@ -210,7 +210,7 @@
         });
     }
 
-    function updateTotalRevenue() {
+    function getTotalRevenueForAllProperties() {
         fetch('/getTotalRevenueForAllProperties')
             .then(response => {
                 if (!response.ok) {
@@ -219,17 +219,18 @@
                 return response.json();
             })
             .then(totalRevenue => {
-                console.log('Odebrane dane:', totalRevenue); // Dodaj ten log
-                // Ustaw wartość w elemencie HTML
-                document.getElementById("totalRevenue").textContent = "Łączna suma przychodów ze wszystkich nieruchomości: " + totalRevenue.toFixed(2) + " PLN";
-
-                // Aktualizuj stawkę procentową
-                updatePercentageRate(totalRevenue);
+                // Tutaj możesz przetworzyć otrzymaną łączną sumę przychodów i zaktualizować widok
+                // Na przykład, możesz wyświetlić tę sumę na stronie internetowej w odpowiednim elemencie HTML
+                const totalRevenueElement = document.getElementById('totalRevenue');
+                totalRevenueElement.textContent = 'Łączna suma przychodów ze wszystkich nieruchomości: ' + totalRevenue.toFixed(2) + ' PLN';
             })
             .catch(error => {
                 console.error('Błąd:', error);
             });
     }
+
+    // Wywołanie funkcji getTotalRevenueForAllProperties
+    getTotalRevenueForAllProperties();
 
     function updatePercentageRate(totalRevenue) {
         var percentageRate = totalRevenue <= 100000 ? '8,5%' : '12,5%';

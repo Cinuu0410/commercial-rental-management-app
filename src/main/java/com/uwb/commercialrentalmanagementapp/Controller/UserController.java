@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -194,8 +195,8 @@ public class UserController {
         String invoiceAddressTenant = rentPaymentService.getAddressOfTenant(propertyId);
         BigDecimal invoiceRentAmount = rentPaymentService.getRentAmount(propertyId);
 
-        String rentPaymentDate = rentPaymentService.getPaymentDate(propertyId);
-        String rentNextInvoiceIssueDate = rentPaymentService.getNextInvoiceIssueDate(propertyId);
+//        String rentPaymentDate = rentPaymentService.getPaymentDate(propertyId);
+//        String rentNextInvoiceIssueDate = rentPaymentService.getNextInvoiceIssueDate(propertyId);
 
         result.put("status", status);
         result.put("amounts", amounts);
@@ -212,8 +213,8 @@ public class UserController {
         result.put("invoiceAddressTenant", invoiceAddressTenant);
         result.put("invoiceRentAmount", invoiceRentAmount);
 
-        result.put("rentPaymentDate", rentPaymentDate);
-        result.put("rentNextInvoiceIssueDate", rentNextInvoiceIssueDate);
+//        result.put("rentPaymentDate", rentPaymentDate);
+//        result.put("rentNextInvoiceIssueDate", rentNextInvoiceIssueDate);
         return result;
     }
 
@@ -285,6 +286,7 @@ public class UserController {
 //            }
 
 
+
             // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
@@ -297,6 +299,4 @@ public class UserController {
 
         return "taxes_page";
     }
-
-
 }

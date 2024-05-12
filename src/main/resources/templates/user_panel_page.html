@@ -101,9 +101,10 @@
             <div class="wallet-info">
                     <b>Portfel: </b><span th:text="${walletBalance}"></span> PLN
             </div>
-
+            <hr class="hr-1">
             <div class="utilities-style">
                 <h2 class="hCenter">Zarządzanie opłatami za media</h2>
+                <br>
                 <form method="post" id="rentAndUtilitiesForm" action="/payUtilities/">
                     <p id="utilitiesStatus"><b>Status opłat za media: </b></p>
                     <p id="utilitiesMonth"><b>Opłata za miesiąc: </b></p>
@@ -112,26 +113,32 @@
                     <button type="submit" id="payUtilitiesButton">Opłać</button>
                 </form>
             </div>
+            <hr class="hr-1">
             <div class="invoice-style">
                 <h2 class="hCenter">Wystawianie faktur</h2>
+                <br>
                 <form method="post" id ="rentAndInvoiceForm" action="/createInvoice">
 <!--                <p id="rentStatus">Status opłaty czynszu przez najemcę: </p>-->
                     <p id="selectedPropertyAddress"><b>Dotyczy nieruchomości: </b></p>
+                    <div id="sellerInfoContainer">
+                        <p><b><i>Dane sprzedawcy (wynajmującego)</i></b></p>
+                        <p id="invoiceFirstLastNameLandlord"><b>Imię i nazwisko: </b></p>
+                        <p id="invoiceAddressLandlord"><b>Adres: </b></p>
+                    </div>
+                    <div id="buyerInfoContainer">
+                        <p><b><i>Dane nabywcy (najemcy)</i></b></p>
+                        <p id="invoiceFirstLastNameTenant"><b>Imię i nazwisko: </b></p>
+                        <p id="invoiceAddressTenant"><b>Adres: </b></p>
+                    </div>
                     <label for="invoiceNumber" class="label-style"><b>Numer faktury: </b></label>
                     <input type="text" id="invoiceNumber" name="invoiceNumber" required>
                     <p><b>Data sprzedaży:</b> <span id="saleDate"></span></p>
-                    <p><b><i>Dane sprzedawcy (wynajmującego)</i></b></p>
-                    <p id="invoiceFirstLastNameLandlord"><b>Imię i nazwisko: </b></p>
-                    <p id="invoiceAddressLandlord"><b>Adres: </b></p>
-                    <p><b><i>Dane nabywcy (najemcy)</i></b></p>
-                    <p id="invoiceFirstLastNameTenant"><b>Imię i nazwisko: </b></p>
-                    <p id="invoiceAddressTenant"><b>Adres: </b></p>
                     <p><b>Nazwa usługi: </b><span id="nameOfService"></span></p>
                     <p id="invoiceRentAmount"><b>Cena usługi: </b></p>
                     <p id="invoicePaymentMethod"><b>Forma płatności: </b></p>
                     <p><b>Termin zapłaty: </b><span id="paymentDeadline"></span></p>
-                    <p id="rentPaymentDate">Data opłacenia faktury przez najemcę: </p>
-                    <p id="rentNextInvoiceIssueDate">Kolejną faktrurę dla najemcy wystaw: </p>
+<!--                    <p id="rentPaymentDate">Data opłacenia faktury przez najemcę: </p>-->
+                    <p id="rentNextInvoiceIssueDate"><b>Kolejną fakturę dla najemcy wystaw: </b></p>
                     <button type="submit" id="createInvoiceButton">Wystaw fakturę</button>
                 </form>
             </div>
@@ -143,6 +150,20 @@
     </div>
 </span>
 <script>
+    function calculateNextInvoiceDate() {
+        var currentDate = new Date();
+        var nextMonth = currentDate.getMonth() + 1;
+        var nextYear = currentDate.getFullYear();
+        if (nextMonth === 12) {
+            nextMonth = 0;
+            nextYear++;
+        }
+        var firstDayNextMonth = new Date(nextYear, nextMonth, 1);
+        var fifthDayNextMonth = new Date(firstDayNextMonth.setDate(firstDayNextMonth.getDate() + 4));
+        return fifthDayNextMonth.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+
     function getLastDayOfMonth() {
         var today = new Date();
         var lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -382,9 +403,10 @@
                         // Ustaw termin zapłaty w elemencie o id "paymentDeadline"
                         document.getElementById("paymentDeadline").textContent = getPaymentDeadline();
                         document.getElementById("invoicePaymentMethod").innerHTML = "<b>Forma płatności: </b>Zasilenie portfela wynajmującego w aplikacji RentManager";
+                        document.getElementById("rentNextInvoiceIssueDate").innerHTML = "<b>Kolejną fakturę dla najemcy wystaw: </b>" + calculateNextInvoiceDate();
 
-                        var rentPaymentDate = response.rentPaymentDate;
-                        var rentNextInvoiceIssueDate = response.rentNextInvoiceIssueDate;
+                        // var rentPaymentDate = response.rentPaymentDate;
+                        // var rentNextInvoiceIssueDate = response.rentNextInvoiceIssueDate;
 
                         console.log('Status opłat za media:', utilitiesStatus);
                         console.log('Kwota za media:', utilitiesAmount);
@@ -399,7 +421,7 @@
                         console.log("Imię i nazwisko nabywcy: ", invoiceFirstLastNameTenant);
                         console.log("Adres nabywcy: ", invoiceAddressTenant);
 
-                        console.log("Data opłacenia faktury: ", rentPaymentDate);
+                        // console.log("Data opłacenia faktury: ", rentPaymentDate);
                         console.log("Wystawienie kolejne faktury: ", rentNextInvoiceIssueDate);
 
                         document.getElementById('utilitiesStatus').innerHTML = "<b>Status opłat za media: </b>" + utilitiesStatus;
@@ -413,8 +435,9 @@
                         document.getElementById("invoiceAddressTenant").innerHTML = "<b>Adres: </b>" + invoiceAddressTenant;
                         document.getElementById("invoiceRentAmount").innerHTML = "<b>Cena usługi: </b>" + invoiceRentAmount;
 
-                        document.getElementById("rentPaymentDate").textContent = "Data opłacenia faktury przez najemcę: " + rentPaymentDate;
-                        document.getElementById("rentNextInvoiceIssueDate").textContent = "Kolejną faktrurę dla najemcy wystaw: " + rentNextInvoiceIssueDate;
+
+                        // document.getElementById("rentPaymentDate").textContent = "Data opłacenia faktury przez najemcę: " + rentPaymentDate;
+                        // document.getElementById("rentNextInvoiceIssueDate").textContent = "Kolejną faktrurę dla najemcy wystaw: " + rentNextInvoiceIssueDate;
 
                         if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana.') {
                             document.getElementById('utilitiesMonth').innerHTML = "<b>Opłata za miesiąc: </b>" + paymentMonth;

@@ -20,4 +20,7 @@ public interface RentPaymentRepository extends JpaRepository<RentPayment, Long> 
 
     Optional<RentPayment> findByPaymentId(Long paymentId);
 
+
+//    @Query("SELECT rp FROM RentPayment rp JOIN RentalAgreement ra ON rp.rentalAgreementId = ra.agreementId JOIN Property p ON ra.property.propertyId = p.propertyId WHERE p.propertyId = :propertyId")
+//    List<RentPayment> findAllByPropertyId(@Param("propertyId") Long propertyId);
 }
