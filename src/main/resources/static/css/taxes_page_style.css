@@ -130,7 +130,7 @@ h1 {
 }
 
 
-#payVatButton{
+#payVatButton, #payIncomeTaxButton{
     font-family: Roboto, sans-serif;
     font-weight: 300;
     font-size: 14px;
@@ -148,7 +148,7 @@ h1 {
     cursor: pointer;
 }
 
-#payVatButton:hover{
+#payVatButton:hover, #payIncomeTaxButton:hover{
     transition : 396ms;
     padding: 10px 50px;
     transform : translateY(-0px);
@@ -157,7 +157,6 @@ h1 {
     border: solid 2px #0066cc;
 }
 
-/**/
 .property-and-wallet-style {
     box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
     transition: box-shadow 300ms ease-out;
@@ -172,3 +171,28 @@ h1 {
     box-shadow: 2px 2px 26px 16px rgba(7, 180, 237, 0.3);
 }
 
+hr {
+    background-color: #fff;
+    padding: 0;
+    margin: 50px;
+}
+
+hr.hr-1 {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+.income-style{
+    box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 300ms ease-out;
+    font: normal normal 18px "proxima-nova";
+}
+
+.income-style:hover{
+    box-shadow: 2px 2px 26px 16px rgba(7, 180, 237, 0.3);
+}
+
+.quote-style{
+    font: normal normal 18px "proxima-nova";
+}

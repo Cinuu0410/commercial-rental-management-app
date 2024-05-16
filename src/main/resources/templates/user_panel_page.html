@@ -47,6 +47,9 @@
         <span th:if="${role eq 'Wynajmujacy'}">
             <a href="/taxes_page">Podatki</a>
         </span>
+        <span th:if="${role eq 'Wynajmujacy'}">
+            <a href="/suggestions_and_analyses">Sugestie i analizy</a>
+        </span>
         <a href="/contact_us">Kontakt</a>
         <span th:if="${role eq 'Administrator'}">
         <a href="/admin_panel">Panel administratora</a>
@@ -101,7 +104,9 @@
             <div class="wallet-info">
                     <b>Portfel: </b><span th:text="${walletBalance}"></span> PLN
             </div>
-            <hr class="hr-1">
+        </div>
+    </div>
+        <div class="container">
             <div class="utilities-style">
                 <h2 class="hCenter">Zarządzanie opłatami za media</h2>
                 <br>
@@ -113,7 +118,8 @@
                     <button type="submit" id="payUtilitiesButton">Opłać</button>
                 </form>
             </div>
-            <hr class="hr-1">
+        </div>
+        <div class="container">
             <div class="invoice-style">
                 <h2 class="hCenter">Wystawianie faktur</h2>
                 <br>

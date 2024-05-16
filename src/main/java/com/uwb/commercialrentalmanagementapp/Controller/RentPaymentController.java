@@ -88,6 +88,35 @@ public class RentPaymentController {
         // Przekierowanie z powrotem do strony z podatkami
         return "redirect:/taxes_page";
     }
+
+    @PostMapping("/calculateIncomeTax")
+    @ResponseBody
+    public String calculateIncomeTax(HttpSession session, Model model, @RequestParam("totalRevenue") String totalRevenueStr,
+                                     @RequestParam("percentageRate") String percentageRateStr) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+        }
+        BigDecimal totalRevenue = new BigDecimal(totalRevenueStr.replaceAll("[^\\d.]", ""));
+        BigDecimal percentageRate = new BigDecimal(percentageRateStr.replaceAll("[^\\d.]", ""));
+
+        BigDecimal incomeTax = rentPaymentService.calculateIncomeTax(totalRevenue, percentageRate);
+
+        BigDecimal walletBalance = walletService.getBalance(loggedInUser.getId());
+        if (walletBalance == null) {
+            walletBalance = BigDecimal.ZERO;
+            session.setAttribute("walletBalance", walletBalance);
+        }
+        if (walletBalance.compareTo(incomeTax) >= 0) {
+            // Zaktualizuj stan portfela
+            walletService.deductFromBalance(loggedInUser, incomeTax);
+            model.addAttribute("message", "Podatek dochodowwy został rozliczony pomyślnie. Portfel został zaktualizowany");
+        } else {
+            model.addAttribute("error", "Brak środków w portfelu.");
+        }
+
+        return "redirect:/taxes_page";
+    }
 }
 
 

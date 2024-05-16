@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -33,6 +32,7 @@ public class UserController {
 
     @Autowired
     private UtilitiesPaymentService utilitiesPaymentService;
+
     @Autowired
     private RentPaymentService rentPaymentService;
 
@@ -279,12 +279,39 @@ public class UserController {
 
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
-//            if (!properties.isEmpty()) {
-//                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
-//                List<RentPayment> rentPayments = rentPaymentService.getRentPaymentsForPropertyId(propertyId);
-//                model.addAttribute("rentPayments", rentPayments);
-//            }
 
+//
+        // Oblicz roczny przychód dla każdej nieruchomości
+        Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+
+        for (Property property : properties) {
+            BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
+            propertyIncomes.put(property, annualIncome);
+            totalRevenue = totalRevenue.add(annualIncome); // Dodajemy przychód do całkowitej sumy
+        }
+
+        // Pobierz informacje o umowach najmu i ich rocznym przychodzie z płatności czynszu
+        List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
+        Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
+
+        for (RentalAgreement agreement : rentalAgreements) {
+            BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
+            rentalAgreementIncomes.put(agreement, totalPaymentAmount);
+        }
+
+
+        // Ustal stawkę procentową ryczałtu na podstawie całkowitego przychodu
+        BigDecimal percentageRate;
+        if (totalRevenue.compareTo(new BigDecimal("100000")) <= 0) {
+            percentageRate = new BigDecimal("8.5");
+        } else {
+            percentageRate = new BigDecimal("12.5");
+        }
+        model.addAttribute("propertyIncomes", propertyIncomes);
+        model.addAttribute("totalRevenue", totalRevenue);
+        model.addAttribute("percentageRate", percentageRate);
+        model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
 
 
             // Dodaj informacje o zalogowanym użytkowniku do modelu

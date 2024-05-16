@@ -1,12 +1,12 @@
-<!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Rental Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/contact_us_page_style.css}">
+    <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/suggestions_and_analyses_page_style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body>
@@ -57,64 +57,51 @@
     </nav>
 </div>
 
-<section class="contact-sec sec-pad">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="contact-detail">
-                    <h1 class="section-title">Skontaktuj się z nami</h1>
+<div id="charts-container">
+    <!-- Kontener dla wykresu -->
+    <div id="chart"></div>
+</div>
 
-                    <ul class="contact-ul">
-                        <li><i class="fa fa-map-marker" aria-hidden="true"></i> Konstantego Ciołkowskiego 1, 15-245 Białystok</li>
+<!-- Skrypt JavaScript -->
+<script th:inline="javascript">
+    /* Pobierz dane z kontrolera Thymeleaf */
+    var propertyIncomes = /*[[${propertyIncomes}]]*/ [];
+    var totalPropertyRevenue = /*[[${totalPropertyRevenue}]]*/ 0;
 
-                        <li>
-                            <i class="fa fa-phone" aria-hidden="true"></i>
-                            <a href="tel:+48123456789"><b>+48 123 456 789</b></a>,
-                            <a href="tel:08510005495"><b>(010)11 22 333</b></a>
-                        </li>
+    /* Przygotuj dane do wykresu */
+    var propertyNames = [];
+    var propertyIncomesData = [];
 
-                        <li>
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                            <a href="mailto:pardeepkumar4bjp@gmail.com"><b> rent_manager_app@gmail.com</b></a>
-                        </li>
-                    </ul>
+    for (var property in propertyIncomes) {
+        propertyNames.push(property.propertyName);
+        propertyIncomesData.push(propertyIncomes[property]);
+    }
 
-                </div>
-            </div>
+    /* Definicja opcji dla wykresu */
+    var options = {
+        series: [{
+            name: 'Przychody z nieruchomości',
+            data: propertyIncomesData
+        }],
+        chart: {
+            type: 'bar',
+            height: 350
+        },
+        xaxis: {
+            categories: propertyNames,
+            labels: {
+                rotate: -45
+            }
+        },
+        title: {
+            text: 'Przychody z nieruchomości'
+        }
+    };
 
-            <div class="col-md-6">
-                <form action="#" class="contFrm" method="POST">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <input type="text" name="name" placeholder="Imię" class="inptFld" required />
-                        </div>
-
-                        <div class="col-sm-6">
-                            <input type="email" name="email" placeholder="Adres e-mail" class="inptFld" required />
-                        </div>
-
-                        <div class="col-sm-6">
-                            <input type="tel" name="phone" placeholder="Numer telefonu" class="inptFld" required />
-                        </div>
-
-                        <div class="col-sm-6">
-                            <input type="text" name="sub" placeholder="Temat" class="inptFld" required />
-                        </div>
-
-                        <div class="col-12">
-                            <textarea class="inptFld" rows="" cols="" placeholder="Opowiedz o swoim problemie..." required></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <input type="submit" name="submit" value="Wyślij" class="inptBtn" />
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
-</section>
+    /* Renderowanie wykresu */
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+</script>
 
 <script>
     function toggleMenu() {

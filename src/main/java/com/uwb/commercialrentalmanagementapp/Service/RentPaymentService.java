@@ -6,16 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.time.Year;
+import java.time.LocalDate;
 
 @Service
 public class RentPaymentService {
@@ -146,7 +141,41 @@ public class RentPaymentService {
         return rentalAgreement.getRentAmount();
     }
 
+
+    public BigDecimal getAnnualPaymentAmount(Long rentalAgreementId) {
+        // Pobierz wszystkie płatności czynszu dla danej umowy najmu
+        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+
+        // Pobierz aktualny rok
+        int currentYear = Year.now().getValue();
+
+        BigDecimal totalPaymentAmount = BigDecimal.ZERO;
+        for (RentPayment payment : rentPayments) {
+            // Przekształć Date na LocalDate
+            LocalDate paymentLocalDate = payment.getIssueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int paymentYear = paymentLocalDate.getYear();
+            if (paymentYear < currentYear) {
+                // Dodaj kwotę płatności do całkowitej sumy
+                totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
+            }
+        }
+
+        System.out.println("Rental Agreement ID: " + rentalAgreementId);
+        System.out.println("Total payment amount for previous year: " + totalPaymentAmount);
+
+        return totalPaymentAmount;
+    }
+
+
+    public BigDecimal calculateIncomeTax(BigDecimal totalRevenue, BigDecimal percentageRate) {
+        // Wzór na obliczenie podatku dochodowego: podatek = przychód * stawka_podatkowa
+        // Załóżmy, że stawka podatkowa jest podana jako wartość procentowa, więc konwertujemy ją na dziesiętną
+        BigDecimal taxRateDecimal = percentageRate.divide(BigDecimal.valueOf(100)); // konwersja procentów na dziesiętne
+        return totalRevenue.multiply(taxRateDecimal);
+    }
 }
+
+
 
 //        public String getStatus(Long propertyId) {
 //        try {

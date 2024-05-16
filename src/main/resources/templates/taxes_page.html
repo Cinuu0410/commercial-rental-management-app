@@ -47,6 +47,9 @@
         <span th:if="${role eq 'Wynajmujacy'}">
             <a href="/taxes_page">Podatki</a>
         </span>
+        <span th:if="${role eq 'Wynajmujacy'}">
+            <a href="/suggestions_and_analyses">Sugestie i analizy</a>
+        </span>
         <a href="/contact_us">Kontakt</a>
         <span th:if="${role eq 'Administrator'}">
         <a href="/admin_panel">Panel administratora</a>
@@ -64,6 +67,8 @@
     <div class="property-and-wallet-style">
         <p><b>Portfel: </b><span th:text="${walletBalance}"></span> PLN</p>
     </div>
+</div>
+    <div class="container">
         <h1 class="hCenter">Płatności dla wybranej nieruchomości</h1>
         <table class="table table-striped">
             <thead>
@@ -94,13 +99,28 @@
 
 <div class="container">
     <h1 class="hCenter">Rozliczanie podatku dochodowego</h1>
-    <p>Szanowny Właścicelu/Właścicielko lokalu!:<br>"W latach 2018-2024 r. stawka ryczałtowego podatku od przychodów z czynszu najmu wynosi 8,5%
+    <br>
+    <p style="text-align: center" class="quote-style"><b>Szanowny Właścicielu/Właścicielko lokalu!</b></p>
+    <p class="quote-style">
+        "W latach 2018-2024 r. stawka ryczałtowego podatku od przychodów z czynszu najmu wynosi 8,5%
         pod warunkiem, że jego wartość nie przekracza 100.000 zł. Po przekroczeniu tej kwoty, stawka rośnie do 12,5%.
         Wyjątkiem jest sytuacja obejmująca lata 2023 - 2024 dotycząca najmu małżonków,
         którzy złożyli wniosek o opodatkowanie całości przychodów z najmu u jednego z nich.
-        Wówczas limit ten u tego małżonka wynosi 200.000 zł."<br>Źródło: <a href="https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/">https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/</a> [dostęp 25.04.2024]</p>
-    <p id="totalRevenue">Łączna suma przychodów ze wszystkich nieruchomości: </p>
-    <p id="percentageRate">Stawka procentowa ryczałtu: </p>
+        Wówczas limit ten u tego małżonka wynosi 200.000 zł."
+        <br>Źródło: <a href="https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/">https://www.e-pity.pl/pit-28/stawka-ryczalt-najem-2018-ponad-100-tysiecy/</a> [dostęp 25.04.2024]
+    </p>
+    <hr class="hr-1">
+    <h3 class = "hCenter">Przychód za rok <span th:text="${#dates.year(#calendars.createNow().time)} - 1"></span></h3>
+    <br>
+    <div th:each="entry : ${propertyIncomes}">
+        <p>
+            <span class="income-style">Przychód z nieruchomości <b><span th:text="${entry.key.address}"></span></b>: <span th:text="${entry.value}"></span> PLN</span>
+        </p>
+    </div>
+    <br>
+    <p id="totalRevenue"><span class="income-style"><b>Suma przychodów ze wszystkich nieruchomości:</b> <span th:text="${totalRevenue}"></span> PLN</span></p>
+    <p id="percentageRate"><span class="income-style"><b>Stawka procentowa ryczałtu:</b> <span th:text="${percentageRate}"></span>%</span></p>
+    <button type="submit" id="payIncomeTaxButton" onclick="handleIncomeTaxCalculation()">Rozlicz podatek</button>
 </div>
 <script>
     function formatDate(dateString) {
@@ -144,8 +164,7 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         handleVatPayment();
-        updateTotalRevenue();
-        updatePercentageRate();
+        handleIncomeTaxCalculation();
     });
 
     function updatePaymentsList() {
@@ -210,32 +229,44 @@
         });
     }
 
-    function getTotalRevenueForAllProperties() {
-        fetch('/getTotalRevenueForAllProperties')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Wystąpił błąd podczas pobierania danych');
+    function calculateIncomeTax(totalRevenue, percentageRate) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    alert("Podatek dochodowy został obliczony pomyślnie.");
+                    window.location.reload();
+                } else {
+                    alert("Wystąpił błąd podczas obliczania podatku dochodowego. Spróbuj ponownie później.");
+                    console.error("Błąd żądania AJAX:", xhr.status);
                 }
-                return response.json();
-            })
-            .then(totalRevenue => {
-                // Tutaj możesz przetworzyć otrzymaną łączną sumę przychodów i zaktualizować widok
-                // Na przykład, możesz wyświetlić tę sumę na stronie internetowej w odpowiednim elemencie HTML
-                const totalRevenueElement = document.getElementById('totalRevenue');
-                totalRevenueElement.textContent = 'Łączna suma przychodów ze wszystkich nieruchomości: ' + totalRevenue.toFixed(2) + ' PLN';
-            })
-            .catch(error => {
-                console.error('Błąd:', error);
-            });
+            }
+        };
+        xhr.open("POST", "/calculateIncomeTax?totalRevenue=" + totalRevenue + "&percentageRate=" + percentageRate);
+        xhr.send();
     }
 
-    // Wywołanie funkcji getTotalRevenueForAllProperties
-    getTotalRevenueForAllProperties();
+    function handleIncomeTaxCalculation() {
+        document.getElementById("payIncomeTaxButton").addEventListener("click", function(event) {
+            event.preventDefault();
 
-    function updatePercentageRate(totalRevenue) {
-        var percentageRate = totalRevenue <= 100000 ? '8,5%' : '12,5%';
-        document.getElementById("percentageRate").textContent = "Stawka procentowa ryczałtu: " + percentageRate;
+            var totalRevenueText = document.getElementById("totalRevenue").textContent.trim();
+            var percentageRateText = document.getElementById("percentageRate").textContent.trim();
+
+            var totalRevenue = parseFloat(totalRevenueText.split(':')[1].trim().replace('PLN', '').trim());
+            var percentageRate = parseFloat(percentageRateText.split(':')[1].trim().replace('%', '').trim());
+
+            console.log("totalRevenue: " + totalRevenue);
+            console.log("percentageRate: " + percentageRate);
+
+            if (totalRevenue !== '' && percentageRate !== '') {
+                calculateIncomeTax(totalRevenue, percentageRate);
+            } else {
+                alert("Wypełnij wszystkie wymagane pola przed obliczeniem podatku dochodowego.");
+            }
+        });
     }
+
 </script>
 
 <script>

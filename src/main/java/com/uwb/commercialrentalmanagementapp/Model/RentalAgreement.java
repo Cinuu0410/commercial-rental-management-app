@@ -32,6 +32,7 @@ public class RentalAgreement {
     @JoinColumn(name = "tenant_id")
     private Tenant tenant;
 
+
     public RentalAgreement() {
     }
 
@@ -42,4 +43,5 @@ public class RentalAgreement {
         this.property = property;
         this.tenant = tenant;
     }
+
 }
