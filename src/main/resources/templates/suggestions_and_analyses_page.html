@@ -57,51 +57,154 @@
     </nav>
 </div>
 
-<div id="charts-container">
-    <!-- Kontener dla wykresu -->
-    <div id="chart"></div>
+<div class="container">
+    <h3 class = "hCenter">Wszystkie przychody z nieruchomości</h3>
+    <div id="charts-container">
+        <!-- Kontener dla wykresu -->
+        <div id="chart" th:data-property-data-json="${propertyDataJson}"></div>
+        <div th:if="${jsonError}" class="alert alert-danger" role="alert">
+            [[${jsonError}]]
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h3 class="hCenter">Roczne przychody z nieruchomości</h3>
+    <!-- Wybór roku i kontener dla drugiego wykresu -->
+    <div class="year-selection">
+        <label for="yearSelect">Wybierz rok:</label>
+        <select id="yearSelect">
+        </select>
+    </div>
+    <div id="annualChart" th:data-annual-incomes-json="${annualIncomesJson}"></div>
+
 </div>
 
-<!-- Skrypt JavaScript -->
-<script th:inline="javascript">
-    /* Pobierz dane z kontrolera Thymeleaf */
-    var propertyIncomes = /*[[${propertyIncomes}]]*/ [];
-    var totalPropertyRevenue = /*[[${totalPropertyRevenue}]]*/ 0;
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Pierwszy wykres
+        var chartElement = document.querySelector("#chart");
+        var propertyDataJson = chartElement.dataset.propertyDataJson;
 
-    /* Przygotuj dane do wykresu */
-    var propertyNames = [];
-    var propertyIncomesData = [];
+        if (propertyDataJson) {
+            try {
+                var propertyData = JSON.parse(propertyDataJson);
 
-    for (var property in propertyIncomes) {
-        propertyNames.push(property.propertyName);
-        propertyIncomesData.push(propertyIncomes[property]);
-    }
+                // Przygotuj dane do wykresu
+                var propertyNames = [];
+                var propertyIncomesData = [];
 
-    /* Definicja opcji dla wykresu */
-    var options = {
-        series: [{
-            name: 'Przychody z nieruchomości',
-            data: propertyIncomesData
-        }],
-        chart: {
-            type: 'bar',
-            height: 350
-        },
-        xaxis: {
-            categories: propertyNames,
-            labels: {
-                rotate: -45
+                propertyData.forEach(function(property) {
+                    propertyNames.push(property.address);
+                    propertyIncomesData.push(property.income);
+                });
+
+                // Definicja opcji dla wykresu
+                var options = {
+                    series: [{
+                        name: 'Przychody z nieruchomości',
+                        data: propertyIncomesData
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: 350
+                    },
+                    xaxis: {
+                        categories: propertyNames,
+                        labels: {
+                            rotate: -45
+                        }
+                    },
+                    title: {
+                        text: 'Przychody z nieruchomości'
+                    }
+                };
+
+                // Renderowanie wykresu
+                var chart = new ApexCharts(chartElement, options);
+                chart.render();
+            } catch (e) {
+                console.error("Error parsing property data JSON:", e);
             }
-        },
-        title: {
-            text: 'Przychody z nieruchomości'
+        } else {
+            console.error("Property data JSON is undefined");
         }
-    };
 
-    /* Renderowanie wykresu */
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+        // Drugi wykres - wybór roku
+        var annualChartElement = document.querySelector("#annualChart");
+        var annualIncomesJson = annualChartElement.dataset.annualIncomesJson;
+        console.log("Annual incomes JSON:", annualIncomesJson); // Dodaj ten console.log
+
+        var yearSelect = document.getElementById("yearSelect");
+
+        if (annualIncomesJson) {
+            try {
+                var annualIncomes = JSON.parse(annualIncomesJson);
+                console.log("Parsed annual incomes:", annualIncomes); // Dodaj ten console.log
+                // Uzyskaj listę dostępnych lat
+                var availableYears = Object.keys(annualIncomes);
+
+                // Sortuj i dodaj lata do selecta
+                availableYears = availableYears.sort();
+                availableYears.forEach(year => {
+                    var option = document.createElement("option");
+                    option.value = year;
+                    option.textContent = year;
+                    yearSelect.appendChild(option);
+                });
+
+                // Funkcja renderująca wykres dla wybranego roku
+                function renderAnnualChart(year) {
+                    var propertyNames = [];
+                    var annualIncomesData = [];
+
+                    Object.keys(annualIncomes).forEach(propertyAddress => {
+                        var incomeForYear = annualIncomes[propertyAddress][year] || 0;
+                        propertyNames.push(propertyAddress);
+                        annualIncomesData.push(incomeForYear);
+                    });
+
+                    var annualOptions = {
+                        series: [{
+                            name: `Przychody za ${year}`,
+                            data: annualIncomesData
+                        }],
+                        chart: {
+                            type: 'bar',
+                            height: 350
+                        },
+                        xaxis: {
+                            categories: propertyNames,
+                            labels: {
+                                rotate: -45
+                            }
+                        },
+                        title: {
+                            text: `Przychody za ${year}`
+                        }
+                    };
+
+                    // Renderowanie wykresu rocznych przychodów
+                    var annualChart = new ApexCharts(annualChartElement, annualOptions);
+                    annualChart.render();
+                }
+
+                // Renderuj wykres dla pierwszego dostępnego roku
+                renderAnnualChart(availableYears[0]);
+
+                // Zmień wykres przy zmianie roku
+                yearSelect.addEventListener("change", function() {
+                    var selectedYear = yearSelect.value;
+                    renderAnnualChart(selectedYear);
+                });
+            } catch (e) {
+                console.error("Error parsing annual incomes JSON:", e);
+            }
+        } else {
+            console.error("Annual incomes JSON is undefined");
+        }
+    });
 </script>
+
 
 <script>
     function toggleMenu() {

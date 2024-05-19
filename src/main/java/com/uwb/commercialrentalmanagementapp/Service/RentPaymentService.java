@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.List;
 import java.time.Year;
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class RentPaymentService {
@@ -166,6 +169,45 @@ public class RentPaymentService {
         return totalPaymentAmount;
     }
 
+    public BigDecimal getTotalRevenue(Long rentalAgreementId) {
+        // Pobierz wszystkie płatności czynszu dla danej umowy najmu
+        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+
+        BigDecimal totalPaymentAmount = BigDecimal.ZERO;
+        for (RentPayment payment : rentPayments) {
+                totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
+        }
+
+        System.out.println("Rental Agreement ID: " + rentalAgreementId);
+        System.out.println("Total payment amount for previous year: " + totalPaymentAmount);
+
+        return totalPaymentAmount;
+    }
+
+    public Map<String, BigDecimal> getAnnualRevenueForYear(Long rentalAgreementId, int year) {
+        // Pobierz wszystkie płatności czynszu dla danej umowy najmu
+        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+
+        Map<String, BigDecimal> yearlyIncome = new HashMap<>();
+
+        List<RentPayment> paymentsForYear = rentPayments.stream()
+                .filter(payment -> {
+                    LocalDate paymentLocalDate = payment.getIssueDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    int paymentYear = paymentLocalDate.getYear();
+                    return paymentYear == year;
+                })
+                .toList();
+
+        BigDecimal totalPaymentAmountForYear = BigDecimal.ZERO;
+        for (RentPayment payment : paymentsForYear) {
+            totalPaymentAmountForYear = totalPaymentAmountForYear.add(payment.getPaymentAmount());
+        }
+        System.out.println("Rental Agreement ID: " + rentalAgreementId);
+        System.out.println("Total payment amount for year 2024: " + totalPaymentAmountForYear);
+        yearlyIncome.put(String.valueOf(year), totalPaymentAmountForYear);
+
+        return yearlyIncome;
+    }
 
     public BigDecimal calculateIncomeTax(BigDecimal totalRevenue, BigDecimal percentageRate) {
         // Wzór na obliczenie podatku dochodowego: podatek = przychód * stawka_podatkowa

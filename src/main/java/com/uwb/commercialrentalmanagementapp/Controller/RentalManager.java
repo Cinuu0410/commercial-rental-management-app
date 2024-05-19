@@ -1,9 +1,12 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uwb.commercialrentalmanagementapp.Model.Property;
 import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import com.uwb.commercialrentalmanagementapp.Model.User;
+import com.uwb.commercialrentalmanagementapp.Repository.PropertyRepository;
 import com.uwb.commercialrentalmanagementapp.Service.PropertyService;
 import com.uwb.commercialrentalmanagementapp.Service.RentPaymentService;
 import com.uwb.commercialrentalmanagementapp.Service.RentalAgreementService;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -37,6 +41,8 @@ public class RentalManager {
 
     @Autowired
     private RentalAgreementService rentalAgreementService;
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     public RentalManager(UserService userService) {
         this.userService = userService;
@@ -87,7 +93,7 @@ public class RentalManager {
     }
 
     @GetMapping("/suggestions_and_analyses")
-    public String suggestionsAndAnalysesPage(Model model, HttpSession session){
+    public String suggestionsAndAnalysesPage(Model model, HttpSession session) throws JsonProcessingException {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser != null) {
             Long userId = loggedInUser.getId();
@@ -96,29 +102,35 @@ public class RentalManager {
             // Tutaj możemy dodać logikę do pobrania danych o przychodach nieruchomości
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
-            // Przygotuj dane o przychodach z nieruchomości
-            Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
-            BigDecimal totalRevenue = BigDecimal.ZERO;
+            // Wyciągnij adresy nieruchomości i ich całkowite przychody
+            List<Map<String, Object>> propertyData = properties.stream().map(property -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("address", property.getAddress());
+                BigDecimal totalIncome = rentPaymentService.getTotalRevenue(property.getPropertyId());
+                map.put("income", totalIncome);
+                return map;
+            }).collect(Collectors.toList());
 
+
+            // Pobierz dane rocznych przychodów dla każdej nieruchomości
+            Map<String, Map<String, BigDecimal>> annualIncomes = new HashMap<>();
             for (Property property : properties) {
-                BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
-                propertyIncomes.put(property, annualIncome);
-                totalRevenue = totalRevenue.add(annualIncome); // Dodajemy przychód do całkowitej sumy
+                Map<String, BigDecimal> yearlyIncome = rentPaymentService.getAnnualRevenueForYear(property.getPropertyId(), 2024);
+                annualIncomes.put(property.getAddress(), yearlyIncome);
+                System.out.println(annualIncomes);
             }
 
-            // Pobierz umowy najmu użytkownika
-            List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
-            Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
-
-            for (RentalAgreement agreement : rentalAgreements) {
-                BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
-                rentalAgreementIncomes.put(agreement, totalPaymentAmount);
+            try {
+                // Serializuj dane do JSON
+                String propertyDataJson = new ObjectMapper().writeValueAsString(propertyData);
+                String annualIncomesJson = new ObjectMapper().writeValueAsString(annualIncomes);
+                System.out.println(annualIncomesJson);
+                model.addAttribute("propertyDataJson", propertyDataJson);
+                model.addAttribute("annualIncomesJson", annualIncomesJson);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                model.addAttribute("jsonError", "Error processing JSON");
             }
-
-            // Przekazujemy dane do widoku
-            model.addAttribute("propertyIncomes", propertyIncomes);
-            model.addAttribute("totalRevenue", totalRevenue);
-            model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
 
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
@@ -129,6 +141,28 @@ public class RentalManager {
         return "suggestions_and_analyses_page";
     }
 
-
+//    // Przygotuj dane o przychodach z nieruchomości
+//    Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
+//    BigDecimal totalRevenue = BigDecimal.ZERO;
+//
+//            for (Property property : properties) {
+//        BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
+//        propertyIncomes.put(property, annualIncome);
+//        totalRevenue = totalRevenue.add(annualIncome); // Dodajemy przychód do całkowitej sumy
+//    }
+//
+//    // Pobierz umowy najmu użytkownika
+//    List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
+//    Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
+//
+//            for (RentalAgreement agreement : rentalAgreements) {
+//        BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
+//        rentalAgreementIncomes.put(agreement, totalPaymentAmount);
+//    }
+//
+//    // Przekazujemy dane do widoku
+//            model.addAttribute("propertyIncomes", propertyIncomes);
+//            model.addAttribute("totalRevenue", totalRevenue);
+//            model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
 
 }
