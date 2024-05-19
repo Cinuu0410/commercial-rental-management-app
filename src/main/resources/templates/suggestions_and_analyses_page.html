@@ -67,18 +67,68 @@
         </div>
     </div>
 </div>
+<!--<div class="container">-->
+<!--    <h3 class="hCenter">Roczne przychody z nieruchomości</h3>-->
+<!--    <div class="year-selection">-->
+<!--        <label for="yearSelect">Wybierz rok:</label>-->
+<!--        <select id="yearSelect">-->
+<!--        </select>-->
+<!--    </div>-->
+<!--    <div id="annualChart" th:data-annual-incomes-json="${annualIncomesJson}"></div>-->
+<!--</div>-->
 <div class="container">
     <h3 class="hCenter">Roczne przychody z nieruchomości</h3>
-    <!-- Wybór roku i kontener dla drugiego wykresu -->
     <div class="year-selection">
         <label for="yearSelect">Wybierz rok:</label>
-        <select id="yearSelect">
-        </select>
+        <select id="yearSelect"></select>
     </div>
     <div id="annualChart" th:data-annual-incomes-json="${annualIncomesJson}"></div>
-
 </div>
 
+<div class="container" id="lastRentInfo" th:data-last-rent-infos-json="${lastRentInfosJson}">
+    <h3 class="hCenter">Optymalizacja zysku</h3>
+    <h4>Podwyższenie czynszu za wynajem</h4>
+    <p>Do końca roku za pozostałe miesiące przychód będzie wynosił:</p>
+    <p id="incomeWithoutIncrease">bez podwyżki czynszu: </p>
+    <p id="incomeWithIncrease">z podwyżką czynszu: </p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        console.log("DOM fully loaded and parsed");
+
+        var lastRentInfoElement = document.getElementById("lastRentInfo");
+        var incomeWithoutIncreaseElement = document.getElementById("incomeWithoutIncrease");
+        var incomeWithIncreaseElement = document.getElementById("incomeWithIncrease");
+
+        if (lastRentInfoElement) {
+            console.log("Found last rent info element");
+
+            try {
+                var lastRentInfoJson = lastRentInfoElement.dataset.lastRentInfosJson;
+                console.log("Last rent info JSON:", lastRentInfoJson);
+
+                var lastRentInfo = JSON.parse(lastRentInfoJson);
+                console.log("Parsed last rent info:", lastRentInfo);
+
+                var incomeWithoutIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
+                    return acc + rentPayment.paymentAmount;
+                }, 0);
+                console.log("Income without increase:", incomeWithoutIncrease);
+
+                var incomeWithIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
+                    return acc + rentPayment.paymentAmount * 1.1; // 10% increase
+                }, 0);
+                console.log("Income with increase:", incomeWithIncrease);
+
+                incomeWithoutIncreaseElement.textContent += incomeWithoutIncrease.toFixed(2);
+                incomeWithIncreaseElement.textContent += incomeWithIncrease.toFixed(2);
+            } catch (e) {
+                console.error("Error processing last rent info JSON:", e);
+            }
+        }
+    });
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Pierwszy wykres
@@ -111,11 +161,51 @@
                     xaxis: {
                         categories: propertyNames,
                         labels: {
-                            rotate: -45
+                            rotate: -45,
+                            style: {
+                                colors: [],
+                                fontSize: '12px',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                fontWeight: 400,
+                            }
+                        },
+                        title: {
+                            text: 'Nieruchomości',
+                            style: {
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: '#263238'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        title: {
+                            text: 'Przychody (PLN)',
+                            style: {
+                                fontSize: '14px',
+                                fontWeight: 'bold',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: '#263238'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) {
+                                return val + " PLN";
+                            }
                         }
                     },
                     title: {
-                        text: 'Przychody z nieruchomości'
+                        text: `Łączny przychód z wynajmu od momentu posiadania nieruchomości`,
+                        align: 'center',
+                        style: {
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            fontFamily: 'Helvetica, Arial, sans-serif',
+                            color: '#263238'
+                        }
                     }
                 };
 
@@ -131,20 +221,27 @@
 
         // Drugi wykres - wybór roku
         var annualChartElement = document.querySelector("#annualChart");
-        var annualIncomesJson = annualChartElement.dataset.annualIncomesJson;
-        console.log("Annual incomes JSON:", annualIncomesJson); // Dodaj ten console.log
+        var annualIncomesJson = annualChartElement.getAttribute("data-annual-incomes-json");
+        console.log("Annual incomes JSON:", annualIncomesJson);
 
         var yearSelect = document.getElementById("yearSelect");
 
         if (annualIncomesJson) {
             try {
                 var annualIncomes = JSON.parse(annualIncomesJson);
-                console.log("Parsed annual incomes:", annualIncomes); // Dodaj ten console.log
-                // Uzyskaj listę dostępnych lat
-                var availableYears = Object.keys(annualIncomes);
+                console.log("Parsed annual incomes:", annualIncomes);
 
-                // Sortuj i dodaj lata do selecta
-                availableYears = availableYears.sort();
+                // Zbierz wszystkie dostępne lata z danych
+                var availableYears = new Set();
+                Object.values(annualIncomes).forEach(incomesPerProperty => {
+                    Object.keys(incomesPerProperty).forEach(year => {
+                        availableYears.add(year);
+                    });
+                });
+
+                availableYears = Array.from(availableYears).sort();
+                console.log("Available years:", availableYears);
+
                 availableYears.forEach(year => {
                     var option = document.createElement("option");
                     option.value = year;
@@ -152,7 +249,8 @@
                     yearSelect.appendChild(option);
                 });
 
-                // Funkcja renderująca wykres dla wybranego roku
+                var annualChart; // Zmienna przechowująca instancję wykresu
+
                 function renderAnnualChart(year) {
                     var propertyNames = [];
                     var annualIncomesData = [];
@@ -170,28 +268,102 @@
                         }],
                         chart: {
                             type: 'bar',
-                            height: 350
+                            height: 350,
+                            animations: {
+                                enabled: true,
+                                easing: 'easeinout',
+                                speed: 800,
+                                animateGradually: {
+                                    enabled: true,
+                                    delay: 150
+                                },
+                                dynamicAnimation: {
+                                    enabled: true,
+                                    speed: 350
+                                }
+                            }
+                        },
+                        colors: ['#59c1ff'],
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 4,
+                                horizontal: false,
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false
                         },
                         xaxis: {
                             categories: propertyNames,
                             labels: {
-                                rotate: -45
+                                rotate: -45,
+                                style: {
+                                    colors: [],
+                                    fontSize: '12px',
+                                    fontFamily: 'Helvetica, Arial, sans-serif',
+                                    fontWeight: 400,
+                                }
+                            },
+                            title: {
+                                text: 'Nieruchomości',
+                                style: {
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Helvetica, Arial, sans-serif',
+                                    color: '#263238'
+                                }
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Przychody (PLN)',
+                                style: {
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Helvetica, Arial, sans-serif',
+                                    color: '#263238'
+                                }
                             }
                         },
                         title: {
-                            text: `Przychody za ${year}`
+                            text: `Przychody za ${year}`,
+                            align: 'center',
+                            style: {
+                                fontSize: '20px',
+                                fontWeight: 'bold',
+                                fontFamily: 'Helvetica, Arial, sans-serif',
+                                color: '#263238'
+                            }
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return val + " PLN";
+                                }
+                            }
+                        },
+                        theme: {
+                            mode: 'light',
+                            palette: 'palette1',
+                            monochrome: {
+                                enabled: false,
+                                color: '#008FFB',
+                                shadeTo: 'light',
+                                shadeIntensity: 0.65
+                            },
                         }
                     };
 
-                    // Renderowanie wykresu rocznych przychodów
-                    var annualChart = new ApexCharts(annualChartElement, annualOptions);
+                    if (annualChart) {
+                        annualChart.destroy(); // Zniszcz stary wykres, jeśli istnieje
+                    }
+
+                    annualChart = new ApexCharts(annualChartElement, annualOptions);
                     annualChart.render();
                 }
 
-                // Renderuj wykres dla pierwszego dostępnego roku
                 renderAnnualChart(availableYears[0]);
 
-                // Zmień wykres przy zmianie roku
                 yearSelect.addEventListener("change", function() {
                     var selectedYear = yearSelect.value;
                     renderAnnualChart(selectedYear);

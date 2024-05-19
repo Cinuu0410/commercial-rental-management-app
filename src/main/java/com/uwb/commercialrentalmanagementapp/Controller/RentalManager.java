@@ -4,6 +4,7 @@ package com.uwb.commercialrentalmanagementapp.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uwb.commercialrentalmanagementapp.Model.Property;
+import com.uwb.commercialrentalmanagementapp.Model.RentPayment;
 import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import com.uwb.commercialrentalmanagementapp.Model.User;
 import com.uwb.commercialrentalmanagementapp.Repository.PropertyRepository;
@@ -95,74 +96,63 @@ public class RentalManager {
     @GetMapping("/suggestions_and_analyses")
     public String suggestionsAndAnalysesPage(Model model, HttpSession session) throws JsonProcessingException {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null) {
-            Long userId = loggedInUser.getId();
-            String loggedRole = userService.getRole(userId);
-
-            // Tutaj możemy dodać logikę do pobrania danych o przychodach nieruchomości
-            List<Property> properties = propertyService.getPropertiesForOwner(userId);
-
-            // Wyciągnij adresy nieruchomości i ich całkowite przychody
-            List<Map<String, Object>> propertyData = properties.stream().map(property -> {
-                Map<String, Object> map = new HashMap<>();
-                map.put("address", property.getAddress());
-                BigDecimal totalIncome = rentPaymentService.getTotalRevenue(property.getPropertyId());
-                map.put("income", totalIncome);
-                return map;
-            }).collect(Collectors.toList());
-
-
-            // Pobierz dane rocznych przychodów dla każdej nieruchomości
-            Map<String, Map<String, BigDecimal>> annualIncomes = new HashMap<>();
-            for (Property property : properties) {
-                Map<String, BigDecimal> yearlyIncome = rentPaymentService.getAnnualRevenueForYear(property.getPropertyId(), 2024);
-                annualIncomes.put(property.getAddress(), yearlyIncome);
-                System.out.println(annualIncomes);
-            }
-
-            try {
-                // Serializuj dane do JSON
-                String propertyDataJson = new ObjectMapper().writeValueAsString(propertyData);
-                String annualIncomesJson = new ObjectMapper().writeValueAsString(annualIncomes);
-                System.out.println(annualIncomesJson);
-                model.addAttribute("propertyDataJson", propertyDataJson);
-                model.addAttribute("annualIncomesJson", annualIncomesJson);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                model.addAttribute("jsonError", "Error processing JSON");
-            }
-
-            session.setAttribute("loggedInUser", loggedInUser);
-            session.setAttribute("role", loggedRole);
-
-            model.addAttribute("loggedInUser", loggedInUser);
-            model.addAttribute("role", loggedRole);
+        if (loggedInUser == null) {
+            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
         }
+
+        Long userId = loggedInUser.getId();
+        String loggedRole = userService.getRole(userId);
+
+        // Tutaj możemy dodać logikę do pobrania danych o przychodach nieruchomości
+        List<Property> properties = propertyService.getPropertiesForOwner(userId);
+
+        // Wyciągnij adresy nieruchomości i ich całkowite przychody
+        List<Map<String, Object>> propertyData = properties.stream().map(property -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("address", property.getAddress());
+            BigDecimal totalIncome = rentPaymentService.getTotalRevenue(property.getPropertyId());
+            map.put("income", totalIncome);
+            return map;
+        }).collect(Collectors.toList());
+
+        Map<String, Map<Integer, BigDecimal>> annualIncomes = new HashMap<>();
+        for (Property property : properties) {
+            Map<Integer, BigDecimal> yearlyIncomes = rentPaymentService.getAnnualRevenues(property.getPropertyId());
+            annualIncomes.put(property.getAddress(), yearlyIncomes);
+            System.out.println(annualIncomes);
+        }
+
+        Map<String, RentPayment> lastRentInfo = new HashMap<>();
+        for (Property property : properties) {
+            List<RentPayment> rentPayments = rentPaymentService.getLastRentInfoForProperty(property.getPropertyId());
+            if (!rentPayments.isEmpty()) {
+                RentPayment lastRentPayment = rentPayments.get(0); // Pobierz pierwszą płatność z listy (czyli ostatnią)
+                lastRentInfo.put(property.getAddress(), lastRentPayment);
+            }
+        }
+        System.out.println("Last rent Info: " + lastRentInfo);
+
+
+        try {
+            // Serializuj dane do JSON
+            String propertyDataJson = new ObjectMapper().writeValueAsString(propertyData);
+            String annualIncomesJson = new ObjectMapper().writeValueAsString(annualIncomes);
+            String lastRentInfoJson = new ObjectMapper().writeValueAsString(lastRentInfo);
+            System.out.println("Serialized annualIncomesJson: " + annualIncomesJson);
+            model.addAttribute("propertyDataJson", propertyDataJson);
+            model.addAttribute("annualIncomesJson", annualIncomesJson);
+            model.addAttribute("lastRentInfosJson", lastRentInfoJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            model.addAttribute("jsonError", "Error processing JSON");
+        }
+
+
+        session.setAttribute("loggedInUser", loggedInUser);
+        session.setAttribute("role", loggedRole);
+
+        model.addAttribute("loggedInUser", loggedInUser);
+        model.addAttribute("role", loggedRole);
         return "suggestions_and_analyses_page";
     }
-
-//    // Przygotuj dane o przychodach z nieruchomości
-//    Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
-//    BigDecimal totalRevenue = BigDecimal.ZERO;
-//
-//            for (Property property : properties) {
-//        BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
-//        propertyIncomes.put(property, annualIncome);
-//        totalRevenue = totalRevenue.add(annualIncome); // Dodajemy przychód do całkowitej sumy
-//    }
-//
-//    // Pobierz umowy najmu użytkownika
-//    List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
-//    Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
-//
-//            for (RentalAgreement agreement : rentalAgreements) {
-//        BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
-//        rentalAgreementIncomes.put(agreement, totalPaymentAmount);
-//    }
-//
-//    // Przekazujemy dane do widoku
-//            model.addAttribute("propertyIncomes", propertyIncomes);
-//            model.addAttribute("totalRevenue", totalRevenue);
-//            model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
-
 }
