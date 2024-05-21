@@ -86,11 +86,38 @@
 </div>
 
 <div class="container" id="lastRentInfo" th:data-last-rent-infos-json="${lastRentInfosJson}">
-    <h3 class="hCenter">Optymalizacja zysku</h3>
+    <h3 class="hCenter">Sugestie dotyczące optymalizacji zysku</h3>
+    <hr class="hr-1">
     <h4>Podwyższenie czynszu za wynajem</h4>
+    <p>Rozważ podwyższnie czynszu dla najemców. Skorzystaj z poniższego kalkulatora, aby przeanalizować przychód przed i po podwyżce czynszu o dany procent. Dane dotyczące przewidywanego przychodu do końca roku zostały pobrane z bazy danych. </p>
+    <label for="percentIncrease">Wybierz procentową podwyżkę:</label>
+    <select id="percentIncrease">
+        <option value="10">10%</option>
+        <option value="15">15%</option>
+        <option value="20">20%</option>
+        <option value="25">25%</option>
+        <option value="30">30%</option>
+        <option value="35">35%</option>
+        <option value="40">40%</option>
+    </select>
     <p>Do końca roku za pozostałe miesiące przychód będzie wynosił:</p>
-    <p id="incomeWithoutIncrease">bez podwyżki czynszu: </p>
-    <p id="incomeWithIncrease">z podwyżką czynszu: </p>
+    <p id="incomeWithoutIncrease"><b>bez podwyżki czynszu:</b> </p>
+    <p id="incomeWithIncrease"><b>z podwyżką czynszu:</b> </p>
+    <hr class="hr-1">
+    <h4>Reklama lokalu użytkowego</h4>
+    <p>Korzystaj z wielu kanałów reklamowych, takich jak portale nieruchomości lub media społecznościowe, aby dotrzeć do szerszej grupy potencjalnych najemców.</p>
+    <hr class="hr-1">
+    <h4>Efektywność energetyczna</h4>
+    <p>Zainwestuj w energooszczędne urządzenia i instalacje (np. oświetlenie LED, nowoczesne okna), aby obniżyć rachunki za media.</p>
+    <hr class="hr-1">
+    <h4>Renowacje i modernizacje</h4>
+    <p>Przeprowadź modernizacje, które zwiększą atrakcyjność nieruchomości (np. nowa kuchnia, łazienka, podłogi).</p>
+    <hr class="hr-1">
+    <h4>Relacje z najemcami</h4>
+    <p>Buduj pozytywne relacje z najemcami, reagując szybko na ich potrzeby i problemy. Zadowoleni najemcy są bardziej skłonni do przedłużania umowy.</p>
+    <hr class="hr-1">
+    <h4>Ulgi podatkowe</h4>
+    <p>Skonsultuj się z doradcą podatkowym, aby skorzystać z dostępnych ulg i odliczeń podatkowych związanych z wynajmem nieruchomości.</p>
 </div>
 
 <script>
@@ -100,7 +127,9 @@
         var lastRentInfoElement = document.getElementById("lastRentInfo");
         var incomeWithoutIncreaseElement = document.getElementById("incomeWithoutIncrease");
         var incomeWithIncreaseElement = document.getElementById("incomeWithIncrease");
+        var percentIncreaseSelect = document.getElementById("percentIncrease");
 
+        function calculateIncome() {
         if (lastRentInfoElement) {
             console.log("Found last rent info element");
 
@@ -111,22 +140,40 @@
                 var lastRentInfo = JSON.parse(lastRentInfoJson);
                 console.log("Parsed last rent info:", lastRentInfo);
 
+                var percentIncrease = parseInt(percentIncreaseSelect.value) / 100; // Procentowa podwyżka czynszu
+                console.log("Percent increase:", percentIncrease);
+
+                var currentMonth = new Date().getMonth() + 1; // Months are 0-based in JavaScript
+                var monthsLeftInYear = 12 - currentMonth;
+
                 var incomeWithoutIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
-                    return acc + rentPayment.paymentAmount;
+                    var paymentMonth = new Date(rentPayment.issueDate).getMonth() + 1;
+                    var monthsLeft = 12 - paymentMonth;
+                    return acc + (rentPayment.paymentAmount * monthsLeft);
                 }, 0);
+
                 console.log("Income without increase:", incomeWithoutIncrease);
 
                 var incomeWithIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
-                    return acc + rentPayment.paymentAmount * 1.1; // 10% increase
+                    var paymentMonth = new Date(rentPayment.issueDate).getMonth() + 1;
+                    var monthsLeft = 12 - paymentMonth;
+                    return acc + (rentPayment.paymentAmount * (1+percentIncrease) * monthsLeft); // 10% increase
                 }, 0);
+
                 console.log("Income with increase:", incomeWithIncrease);
 
-                incomeWithoutIncreaseElement.textContent += incomeWithoutIncrease.toFixed(2);
-                incomeWithIncreaseElement.textContent += incomeWithIncrease.toFixed(2);
+                incomeWithoutIncreaseElement.textContent = "bez podwyżki czynszu: " + incomeWithoutIncrease.toFixed(2);
+                incomeWithIncreaseElement.textContent = "z podwyżką czynszu: " + incomeWithIncrease.toFixed(2);
             } catch (e) {
                 console.error("Error processing last rent info JSON:", e);
             }
         }
+    }
+
+    percentIncreaseSelect.addEventListener("change", calculateIncome);
+
+    // Wywołanie funkcji raz na start, aby zainicjować wyświetlanie danych
+    calculateIncome();
     });
 </script>
 <script>
@@ -376,8 +423,6 @@
         }
     });
 </script>
-
-
 <script>
     function toggleMenu() {
         var sideMenu = document.querySelector('.side-menu');
@@ -399,7 +444,6 @@
         // Następnie przekieruj użytkownika na stronę wylogowania
         window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
     }
-
 </script>
 </body>
 </html>

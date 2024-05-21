@@ -112,6 +112,8 @@
     <hr class="hr-1">
     <h3 class = "hCenter">Przychód za rok <span th:text="${#dates.year(#calendars.createNow().time)} - 1"></span></h3>
     <br>
+    <p class = "quote-style">Poniżej znajduje się szczegółowe podsumowanie wszystkich przychodów z najmu za cały rok <span th:text="${#dates.year(#calendars.createNow().time)} - 1"></span>. Rozliczenie podatku dochodowego jest kompleksowe - roczne. </p>
+    <br>
     <div th:each="entry : ${propertyIncomes}">
         <p>
             <span class="income-style">Przychód z nieruchomości <b><span th:text="${entry.key.address}"></span></b>: <span th:text="${entry.value}"></span> PLN</span>
@@ -229,12 +231,14 @@
         });
     }
 
+    let taxCalculated = false; // Zmienna stanu
+
     function calculateIncomeTax(totalRevenue, percentageRate) {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
-                    alert("Podatek dochodowy został obliczony pomyślnie.");
+                    alert("Podatek dochodowy został odprowadzony pomyślnie.");
                     window.location.reload();
                 } else {
                     alert("Wystąpił błąd podczas obliczania podatku dochodowego. Spróbuj ponownie później.");
@@ -259,16 +263,15 @@
             console.log("totalRevenue: " + totalRevenue);
             console.log("percentageRate: " + percentageRate);
 
-            if (totalRevenue !== '' && percentageRate !== '') {
+            if (!isNaN(totalRevenue) && !isNaN(percentageRate)) {
+                document.getElementById("payIncomeTaxButton").disabled = true; // Zablokuj przycisk natychmiast
                 calculateIncomeTax(totalRevenue, percentageRate);
             } else {
                 alert("Wypełnij wszystkie wymagane pola przed obliczeniem podatku dochodowego.");
             }
         });
     }
-
 </script>
-
 <script>
     function toggleMenu() {
         var sideMenu = document.querySelector('.side-menu');
