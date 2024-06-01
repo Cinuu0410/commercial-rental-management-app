@@ -1,7 +1,9 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
+import com.uwb.commercialrentalmanagementapp.Model.Tenant;
 import com.uwb.commercialrentalmanagementapp.Model.User;
+import com.uwb.commercialrentalmanagementapp.Repository.TenantRepository;
 import com.uwb.commercialrentalmanagementapp.Repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,9 @@ public class UserService {
     private UserRepository userRepository;
 
     public boolean authenticate(String username, String password) {
-        // Pobierz użytkownika z bazy danych na podstawie nazwy użytkownika
         User user = userRepository.findByUsername(username);
 
         if (user != null) {
-            // Haszuj podane hasło i porównaj z hasłem w bazie danych
             String hashedPassword = hashPassword(password);
             return hashedPassword.equals(user.getPassword());
         }
@@ -33,10 +33,8 @@ public class UserService {
     }
     private String hashPassword(String password) {
         if (password != null) {
-            // Wybierz algorytm haszujący (SHA-256 w tym przypadku)
             return DigestUtils.sha256Hex(password);
         } else {
-            // Obsłuż sytuację, gdy hasło jest null
             throw new IllegalArgumentException("Password cannot be null");
         }
     }
@@ -44,10 +42,8 @@ public class UserService {
     //metoda potrzebna przy dodawaniu użytkownika z panelu admina
     public String hashAndSaltPassword(String password) {
         if (password != null) {
-            // Wybierz algorytm haszujący (SHA-256 w tym przypadku)
             return hashPassword(password);
         } else {
-            // Obsłuż sytuację, gdy hasło jest null
             throw new IllegalArgumentException("Password cannot be null");
         }
     }
@@ -65,7 +61,6 @@ public class UserService {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
         newUser.setRole(role.getRoleName());
-        // Dodaj inne pola użytkownika, np. imię, nazwisko, e-mail
         userRepository.save(newUser);
     }
 
@@ -84,6 +79,4 @@ public class UserService {
     public void saveUser(User user) {
         userRepository.save(user);
     }
-
-
 }

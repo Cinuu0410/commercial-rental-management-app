@@ -1,6 +1,7 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
 import com.uwb.commercialrentalmanagementapp.Model.Property;
+import com.uwb.commercialrentalmanagementapp.Model.TypeOfProperty;
 import com.uwb.commercialrentalmanagementapp.Repository.PropertyRepository;
 import com.uwb.commercialrentalmanagementapp.Repository.RentPaymentRepository;
 import com.uwb.commercialrentalmanagementapp.Repository.RentalAgreementRepository;
@@ -27,6 +28,11 @@ public class PropertyService {
         // Użyj repozytorium do pobrania nieruchomości na podstawie ID właściciela
         return propertyRepository.findPropertiesByOwnerId(ownerId);
     }
+
+    public List<TypeOfProperty> getAllTypesOfProperties() {
+        return propertyRepository.findAllTypesOfProperties();
+    }
+
 
 //    public BigDecimal getAnnualPaymentAmount(Long rentalAgreementId) {
 //        // Pobierz wszystkie płatności czynszu dla danej umowy najmu

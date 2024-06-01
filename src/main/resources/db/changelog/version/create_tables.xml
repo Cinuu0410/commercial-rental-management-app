@@ -32,6 +32,16 @@
             </column>
         </createTable>
 
+        <createTable tableName="types_of_properties">
+            <column name="type_id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kind" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+
         <createTable tableName="properties">
             <column name="property_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -48,8 +58,16 @@
             <column name="owner_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
+            <column name="type_id" type="INT">
+                <constraints nullable="false" unique="false"/>
+            </column>
         </createTable>
 
+        <addForeignKeyConstraint baseTableName="properties"
+                                 baseColumnNames="type_id"
+                                 referencedTableName="types_of_properties"
+                                 referencedColumnNames="type_id"
+                                 constraintName="fk_properties_type_id"/>
 
         <createTable tableName="tenants">
             <column name="tenant_id" type="BIGINT" autoIncrement="true">
@@ -70,7 +88,14 @@
             <column name="post_code" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
+            <column name="preferred_kind_of_property" type="INT"/>
         </createTable>
+
+        <addForeignKeyConstraint baseTableName="tenants"
+                                 baseColumnNames="preferred_kind_of_property"
+                                 referencedTableName="types_of_properties"
+                                 referencedColumnNames="type_id"
+                                 constraintName="fk_tenants_preferred_kind_id"/>
 
         <createTable tableName="landlords">
             <column name="landlord_id" type="BIGINT" autoIncrement="true">
@@ -120,6 +145,8 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_owner_to_user_id"/>
     </changeSet>
+    
+    
 
 
     <changeSet id="5" author="Marcin Zaczeniuk">

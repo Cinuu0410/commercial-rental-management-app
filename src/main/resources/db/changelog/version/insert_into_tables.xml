@@ -50,6 +50,34 @@
             <column name="role" value="Najemca"/>
             <column name="wallet" value="2200"/>
         </insert>
+        <insert tableName="app_user">
+            <column name="first_name" value = "Jarosław"/>
+            <column name="last_name" value = "Królikowski"/>
+            <column name="email" value="jarek.k@gmail.com"/>
+            <column name="username" value="User5"/>
+            <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
+            <column name="role" value="Najemca"/>
+            <column name="wallet" value="2800"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="types-of-properties-inserts" author="Marcin Zaczeniuk">
+        <insert tableName="types_of_properties">
+            <column name="type_id" valueNumeric="1"/>
+            <column name="kind" value="Lokal gastronomiczny"/>
+        </insert>
+        <insert tableName="types_of_properties">
+            <column name="type_id" valueNumeric="2"/>
+            <column name="kind" value="Biuro"/>
+        </insert>
+        <insert tableName="types_of_properties">
+            <column name="type_id" valueNumeric="3"/>
+            <column name="kind" value="Magazyn"/>
+        </insert>
+        <insert tableName="types_of_properties">
+            <column name="type_id" valueNumeric="4"/>
+            <column name="kind" value="Sklep"/>
+        </insert>
     </changeSet>
 
 <!--  TABELA PROPERTIES  -->
@@ -59,24 +87,28 @@
             <column name="area" value = "32"/>
             <column name="number_of_rooms" value="1"/>
             <column name="owner_id" value="2"/>
+            <column name="type_id" valueNumeric="2"/>
         </insert>
         <insert tableName="properties">
             <column name="address" value = "Świętego Rocha 13/15 lok. 12"/>
             <column name="area" value = "52"/>
             <column name="number_of_rooms" value="2"/>
             <column name="owner_id" value="2"/>
+            <column name="type_id" valueNumeric="2"/>
         </insert>
         <insert tableName="properties">
             <column name="address" value = "Legionowa 9/1"/>
             <column name="area" value = "25"/>
             <column name="number_of_rooms" value="1"/>
             <column name="owner_id" value="2"/>
+            <column name="type_id" valueNumeric="3"/>
         </insert>
         <insert tableName="properties">
             <column name="address" value = "Malinowa 5/3"/>
             <column name="area" value = "45"/>
             <column name="number_of_rooms" value="5"/>
             <column name="owner_id" value="4"/>
+            <column name="type_id" valueNumeric="3"/>
         </insert>
     </changeSet>
 
@@ -88,6 +120,7 @@
             <column name="address" value = "Klepacka 10/1"/>
             <column name="city" value = "Klepacze"/>
             <column name="post_code" value = "16-008"/>
+            <column name="preferred_kind_of_property" value="2"/>
         </insert>
         <insert tableName="tenants">
             <column name="user_id" value="5"/>
@@ -95,6 +128,15 @@
             <column name="address" value = "Paderewskiego 2/5"/>
             <column name="city" value = "Białystok"/>
             <column name="post_code" value = "15-135"/>
+            <column name="preferred_kind_of_property" value="2"/>
+        </insert>
+        <insert tableName="tenants">
+            <column name="user_id" value="6"/>
+            <column name="phone_number" value = "999888000"/>
+            <column name="address" value = "Mierosławskiego 10"/>
+            <column name="city" value = "Białystok"/>
+            <column name="post_code" value = "15-135"/>
+            <column name="preferred_kind_of_property" value="3"/>
         </insert>
     </changeSet>
 
@@ -366,4 +408,6 @@
         <column name="payment_month" value="May"/>
     </insert>
     </changeSet>
+
+
 </databaseChangeLog>

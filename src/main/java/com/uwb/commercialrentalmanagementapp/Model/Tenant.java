@@ -27,17 +27,8 @@ public class Tenant {
     @Column(name = "post_code")
     private String postCode;
 
-    public Tenant() {
-        // Domyślny konstruktor
-    }
+    @Column(name = "preferred_kind_of_property")
+    private Long preferredKindOfProperty;
 
-    public Tenant(Long userId, String phoneNumber, String address, String city, String postCode) {
-        this.userId = userId;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.city = city;
-        this.postCode = postCode;
-    }
-
-    // Getters and setters
+    public Tenant() {}
 }

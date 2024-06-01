@@ -120,6 +120,67 @@
     <p>Skonsultuj się z doradcą podatkowym, aby skorzystać z dostępnych ulg i odliczeń podatkowych związanych z wynajmem nieruchomości.</p>
 </div>
 
+<div class="container">
+    <h3 class="hCenter">Sugestie dobierania najemców</h3>
+    <br>
+    <p>Poniżej prezentujemy listę nieruchomości, których jesteś właścicielem, wraz z ich typami, oraz zestawienie potencjalnych najemców, którzy wyrazili zainteresowanie danym typem nieruchomości. Wszystkie dane pobierane są bezpośrednio z naszej bazy danych, aby zapewnić aktualność informacji.</p>
+    <hr class="hr-1">
+    <div th:each="property : ${properties}">
+        <p><span class="tenants-selecting"><b>Lokal: </b><span th:text="${property.address}"></span></span></p>
+        <p><span class="tenants-selecting"><b>Typ lokalu: </b><span th:each="type : ${typesOfProperties}" th:if="${type != null and type.typeId == property.typeId}">
+                <span th:text="${type.kind}"></span>
+        </span></span></p>
+        <p><span class="tenants-selecting"><b>Lista potencjalnych najemców:</b></span></p>
+        <ul>
+            <li th:each="tenant : ${tenants}" th:if="${tenant.preferredKindOfProperty == property.typeId}">
+                <span class="tenants-selecting"><span th:text="${@tenantService.getFullNameByTenantId(tenant.tenantId)}"></span>, nr tel.: <span th:text="${tenant.phoneNumber}"></span></span>
+            </li>
+        </ul>
+        <hr class="hr-1">
+    </div>
+</div>
+
+<div class="container">
+    <h3 class="hCenter">Ryzyko najmu</h3>
+    <br>
+    <p>Analiza ryzyka najmu to kluczowy element dla właścicieli nieruchomości oraz osób zarządzających wynajmem lokali. Poniżej przedstawiamy kilka metod weryfikacji najemcy.</p>
+    <hr class="hr-1">
+    <h4>Rozmowa</h4>
+    <p>Jednym z łatwych sposobów sprawdzenia wiarygodności najemcy jest przeprowadzenie rozmowy. Jeśli potencjalny najemca unika odpowiedzi
+        na proste pytania, takie jak dotychczasowe miejsce zamieszkania czy powód zakończenia poprzedniego najmu,
+        może to być powodem do zaniepokojenia dla wynajmującego. Innym sygnałem ostrzegawczym może być nagłe naciskanie
+        na szybkie podjęcie decyzji. Jeśli kandydat na najemcę sugeruje możliwość natychmiastowego wprowadzenia się i
+        pilnie prosi o wydanie kluczy, warto to skrupulatnie rozważyć.</p>
+    <hr class="hr-1">
+    <h4>Dochody najemcy</h4>
+    <p>Należy pamiętać, że umowa najmu to formalny dokument, który wiąże obie strony kontraktu.
+        Wynajmujący zobowiązuje się przekazać swoją własność na długi okres czasu w wyłączne użytkowanie najemcy.
+        Z kolei najemca, korzystając z uprzywilejowanej pozycji wynikającej z przepisów prawa dotyczących ochrony praw lokatorów,
+        ma pewne prawa. Dlatego też istotne jest już na etapie przed podpisaniem umowy ustalenie,
+        czy najemca będzie w stanie sprostać swoim zobowiązaniom. W tym kontekście,
+        prośba o udokumentowanie źródeł dochodów nie powinna budzić większych zastrzeżeń.</p>
+    <hr class="hr-1">
+    <h4>Narzędzia do weryfikacji najemcy</h4>
+    <p>Sprawdzenie wiarygodności najemcy można również dokonać przy użyciu dedykowanych narzędzi dostępnych na rynku.
+        Jednym z takich narzędzi jest Certyfikat Najemcy, który jest oferowany przez platformę <a href="https://simpl.rent/wlasciciel/">simpl.rent</a>.
+        Proces weryfikacji przeprowadzany za pomocą tej aplikacji pozwala w trzech prostych krokach zweryfikować tożsamość,
+        dochody oraz historię kredytową potencjalnego lokatora.</p>
+    <hr class="hr-1">
+    <h4>Oświadczenie co do zaległych opłat</h4>
+    <p>Mało używanym, lecz skutecznym narzędziem zabezpieczającym wynajmującego przed ryzykiem związanych z brakiem płatności jest
+        oświadczenie najemcy o poddaniu się egzekucji co do zapłaty zaległych opłat.
+        Ten dokument, sporządzany w formie aktu notarialnego, ustala maksymalną kwotę, za którą najemca będzie odpowiedzialny.
+        Zazwyczaj obejmuje ona sumę wszystkich należności z tytułu najmu przez cały okres umowy,
+        włączając w to czynsz oraz inne opłaty związane z użytkowaniem lokalu. W przypadku wystąpienia zaległości,
+        zamiast angażować się w długotrwałe procesy sądowe, wystarczy złożyć ten akt w sądzie wraz z wnioskiem o jego wykonanie,
+        a następnie skierować sprawę do komornika w celu odzyskania należności.</p>
+    <a th:href="@{/static/docx/umowa-najmu-lokalu-uzytkowego.doc}" download="umowa-najmu-lokalu-uzytkowego.doc">Pobierz przykładową umowę najmu lokalu użytkowego</a>
+    <br>
+    <a th:href="@{/static/docx/paragraf.docx}" download>Pobierz sam paragraf do umowy tutaj</a>
+    <hr class="hr-1">
+</div>
+
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         console.log("DOM fully loaded and parsed");

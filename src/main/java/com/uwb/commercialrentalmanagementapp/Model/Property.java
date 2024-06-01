@@ -25,12 +25,10 @@ public class Property {
     @Column(name="owner_id")
     private Long ownerId;
 
+    @Column(name = "type_id")
+    private Long typeId;
+
     public Property() {}
 
-    public Property(String address, String area, int numberOfRooms, Long ownerId) {
-        this.address = address;
-        this.area = area;
-        this.numberOfRooms = numberOfRooms;
-        this.ownerId = ownerId;
-    }
+
 }
