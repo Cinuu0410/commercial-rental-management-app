@@ -41,7 +41,7 @@
             <i class="fas fa-times"></i> Zamknij
         </button>
         <a href="/main_page">Strona główna</a>
-        <span th:if="${loggedInUser}">
+        <span th:if="${role eq 'Wynajmujacy' or role eq 'Najemca'}">
             <a href="/user_panel">Panel użytkownika</a>
         </span>
         <span th:if="${role eq 'Wynajmujacy'}">

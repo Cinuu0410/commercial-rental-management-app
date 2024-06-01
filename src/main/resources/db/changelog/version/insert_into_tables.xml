@@ -34,8 +34,8 @@
         </insert>
         <insert tableName="app_user">
             <column name="first_name" value = "Mariusz"/>
-            <column name="last_name" value = "Pudzianowski"/>
-            <column name="email" value="mariusz.p@gmail.com"/>
+            <column name="last_name" value = "Radziszewski"/>
+            <column name="email" value="mariusz.r@gmail.com"/>
             <column name="username" value="User3"/>
             <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
             <column name="role" value="Wynajmujacy"/>
@@ -43,8 +43,8 @@
         </insert>
         <insert tableName="app_user">
             <column name="first_name" value = "Gabriel"/>
-            <column name="last_name" value = "Żeruń"/>
-            <column name="email" value="gabriel.z@gmail.com"/>
+            <column name="last_name" value = "Nowak"/>
+            <column name="email" value="gabriel.n@gmail.com"/>
             <column name="username" value="User4"/>
             <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
             <column name="role" value="Najemca"/>
@@ -351,13 +351,13 @@
             <column name="status" value="paid"/>
             <column name="payment_month" value="May"/>
         </insert>
-        <insert tableName="utilities_payments">
-            <column name="payment_date" value = "NULL"/>
-            <column name="amount" value = "580"/>
-            <column name="property_id" value = "2"/>
-            <column name="status" value="paid"/>
-            <column name="payment_month" value="June"/>
-        </insert>
+<!--        <insert tableName="utilities_payments">-->
+<!--            <column name="payment_date" value = "NULL"/>-->
+<!--            <column name="amount" value = "580"/>-->
+<!--            <column name="property_id" value = "2"/>-->
+<!--            <column name="status" value="paid"/>-->
+<!--            <column name="payment_month" value="June"/>-->
+<!--        </insert>-->
         <insert tableName="utilities_payments">
         <column name="payment_date" value = "NULL"/>
         <column name="amount" value = "800"/>

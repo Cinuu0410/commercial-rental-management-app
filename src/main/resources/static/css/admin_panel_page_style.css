@@ -10,7 +10,6 @@ body {
     overflow-x: hidden;
 }
 
-
 header {
     background-color: #333;
     color: #fff;
@@ -44,6 +43,27 @@ h1 {
     margin: 0;
 }
 
+.btn-primary {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-panel {
+    margin: 20px;
+    text-align: center;
+}
 
 .btn-secondary {
     margin-right: 10px;
@@ -85,4 +105,11 @@ h1 {
 .auth-buttons {
     display: flex;
     align-items: center;
+}
+
+.container{
+    margin-top: 10px;
+    background-color: lightblue;
+    padding: 20px;
+    border-radius: 5px;
 }

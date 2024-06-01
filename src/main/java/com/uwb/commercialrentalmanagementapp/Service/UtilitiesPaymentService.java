@@ -26,7 +26,7 @@ public class UtilitiesPaymentService {
         if ("paid".equalsIgnoreCase(status)) {
             return "Opłacone";
         } else {
-            return "Opłata za media nie została jeszcze dokonana.";
+            return "Opłata za media nie została jeszcze dokonana";
         }
     }
 
