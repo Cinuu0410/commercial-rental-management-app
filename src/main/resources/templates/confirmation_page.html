@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Rent&Gain Manager</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/confirmation_page_style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Formularz został pomyślnie wysłany</h1>
+    <p>Dziękujemy, <span th:text="${name}"></span>, za skontaktowanie się z nami. Oto szczegóły, które nam przekazałeś:</p>
+    <p><b>Twój adres e-mail:</b> <span th:text="${email}"></span></p>
+    <p><b>Twój numer telefonu:</b> <span th:text="${phone}"></span></p>
+    <p><b>Temat:</b> <span th:text="${subject}"></span></p>
+    <p><b>Wiadomość:</b> <span th:text="${message}"></span></p>
+    <p>Wkrótce otrzymasz odpowiedź na Twoje zgłoszenie.</p>
+    <button onclick="goBack()" class="btn btn-secondary">Powrót</button>
+</div>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</body>
+</html>

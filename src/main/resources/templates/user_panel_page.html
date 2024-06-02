@@ -58,40 +58,43 @@
 </div>
 
 <span th:if="${role eq 'Najemca'}">
-<div class="container">
-    <h1 class="hCenter">Twoje umowy najmu</h1>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Numer umowy (ID)</th>
-            <th>Data rozpoczęcia</th>
-            <th>Data zakończenia</th>
-            <th>Kwota najmu (zł)</th>
-            <th>Nieruchomość (adres)</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="rentalAgreement : ${rentalAgreements}">
-            <td th:text="${rentalAgreement.agreementId}"></td>
-            <td th:text="${rentalAgreement.startDate}"></td>
-            <td th:text="${rentalAgreement.endDate}"></td>
-            <td th:text="${rentalAgreement.rentAmount}"></td>
-            <td th:text="${rentalAgreement.property.address}"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div class="container">
+        <h1 class="hCenter">Twoje umowy najmu</h1>
+        <table class="table table-striped" th:if="${not #lists.isEmpty(rentalAgreements)}">
+            <thead>
+                <tr>
+                    <th>Numer umowy (ID)</th>
+                    <th>Data rozpoczęcia</th>
+                    <th>Data zakończenia</th>
+                    <th>Kwota najmu (zł)</th>
+                    <th>Nieruchomość (adres)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rentalAgreement : ${rentalAgreements}">
+                    <td th:text="${rentalAgreement.agreementId}"></td>
+                    <td th:text="${rentalAgreement.startDate}"></td>
+                    <td th:text="${rentalAgreement.endDate}"></td>
+                    <td th:text="${rentalAgreement.rentAmount}"></td>
+                    <td th:text="${rentalAgreement.property.address}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <p th:unless="${not #lists.isEmpty(rentalAgreements)}">Brak aktywnych umów najmu</p>
+    </div>
 </span>
 
 <span th:if="${role eq 'Wynajmujacy'}">
     <div class="container">
         <div class="landlord-container-1">
             <h2 class="hCenter">Twoje nieruchomości</h2>
-            <ul>
-                <li th:each="property : ${properties}"><i class="fa fa-building" aria-hidden="true"></i>
+            <ul th:if="${not #lists.isEmpty(properties)}">
+                <li th:each="property : ${properties}">
+                    <i class="fa fa-building" aria-hidden="true"></i>
                     <span th:text="${property.address}"></span>
                 </li>
             </ul>
+            <p th:unless="${not #lists.isEmpty(properties)}">Aktualnie nie masz przypisanych nieruchomości</p>
         </div>
     </div>
     <div class="container">
