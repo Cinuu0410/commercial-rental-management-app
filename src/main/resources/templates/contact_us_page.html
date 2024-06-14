@@ -86,19 +86,19 @@
                 <form action="/submitForm" class="contFrm" method="POST">
                     <div class="row">
                         <div class="col-sm-6">
-                            <input type="text" name="name" placeholder="Imię" class="inptFld" required />
+                            <input type="text" name="name" placeholder="Imię" class="inptFld" required/>
                         </div>
 
                         <div class="col-sm-6">
-                            <input type="email" name="email" placeholder="Adres e-mail" class="inptFld" required />
+                            <input type="email" name="email" placeholder="Adres e-mail" class="inptFld" required/>
                         </div>
 
                         <div class="col-sm-6">
-                            <input type="tel" name="phone" placeholder="Numer telefonu" class="inptFld" required />
+                            <input type="tel" name="phone" placeholder="Numer telefonu" class="inptFld" required/>
                         </div>
 
                         <div class="col-sm-6">
-                            <input type="text" name="sub" placeholder="Temat" class="inptFld" required />
+                            <input type="text" name="sub" placeholder="Temat" class="inptFld" required/>
                         </div>
 
                         <div class="col-12">
@@ -106,12 +106,17 @@
                         </div>
 
                         <div class="col-12">
-                            <input type="submit" name="submit" value="Wyślij" class="inptBtn" />
+                            <input type="submit" name="submit" value="Wyślij" class="inptBtn" required/>
                         </div>
                     </div>
                 </form>
             </div>
     </div>
+        <div th:if="${not #strings.isEmpty(error)}">
+            <div class="alert alert-danger">
+                <p th:text="${error}"></p>
+            </div>
+        </div>
     </div>
 </section>
 

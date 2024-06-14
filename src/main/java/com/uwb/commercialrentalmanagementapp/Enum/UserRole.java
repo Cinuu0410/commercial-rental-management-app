@@ -4,7 +4,7 @@ public enum UserRole {
     ADMINISTRATOR("Administrator"),
     WYNAJMUJACY("Wynajmujacy"),
     NAJEMCA("Najemca");
-    ;
+
     private final String roleName;
     UserRole(String roleName) {
         this.roleName = roleName;

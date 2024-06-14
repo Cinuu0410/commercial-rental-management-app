@@ -1,9 +1,7 @@
 package com.uwb.commercialrentalmanagementapp.Service;
 
 import com.uwb.commercialrentalmanagementapp.Enum.UserRole;
-import com.uwb.commercialrentalmanagementapp.Model.Tenant;
 import com.uwb.commercialrentalmanagementapp.Model.User;
-import com.uwb.commercialrentalmanagementapp.Repository.TenantRepository;
 import com.uwb.commercialrentalmanagementapp.Repository.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +76,9 @@ public class UserService {
 
     public void saveUser(User user) {
         userRepository.save(user);
+    }
+
+    public User getUserById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 }

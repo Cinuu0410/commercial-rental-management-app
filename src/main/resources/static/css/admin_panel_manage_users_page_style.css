@@ -188,3 +188,18 @@ h1 {
     margin-bottom: 10px;
     text-align: center;
 }
+
+.table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table td form,
+.table td a {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.inline-buttons{
+    display: flex;
+}

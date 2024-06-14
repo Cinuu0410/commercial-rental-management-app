@@ -1,0 +1,116 @@
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rent&Gain Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/1571ce0189.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/edit_user_form_page_style.css}">
+</head>
+
+<body>
+<header>
+    <div class="top-bar">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i> Menu
+        </button>
+        <h1>
+            <span th:if="${loggedInUser}" th:text="${'Witaj, ' + loggedInUser.firstName + ' ' + loggedInUser.lastName + '!'}"></span>
+        </h1>
+        <div class="auth-buttons">
+            <span th:if="${loggedInUser}">
+                <button type="button" class="btn btn-secondary logout-button" onclick="logout()">Wyloguj się</button>
+            </span>
+            <span th:unless="${loggedInUser}">
+                <button type="button" class="btn btn-secondary login-button" onclick="redirectToLogin()">Zaloguj</button>
+                <span class="spacing"></span>
+                <button type="button" class="btn btn-secondary register-button" onclick="redirectToRegister()">Rejestracja</button>
+            </span>
+        </div>
+    </div>
+</header>
+
+<div class="toolbar-menu">
+    <div class="toolbar">
+        <div class="toolbar-top"></div>
+    </div>
+
+    <nav class="side-menu">
+        <button type="button" class="btn btn-secondary menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-times"></i> Zamknij
+        </button>
+        <a href="/main_page">Strona główna</a>
+        <a href="/contact_us">Kontakt</a>
+        <span th:if="${role eq 'Administrator'}">
+        <a href="/admin_panel">Panel administratora</a>
+        </span>
+    </nav>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Edycja użytkownika</h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{'/editUser/' + ${user.id}}" method="post">
+                        <div class="form-group">
+                            <label for="username">Nazwa użytkownika:</label>
+                            <input type="text" id="username" name="username" class="form-control" th:value="${user.username}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">Imię:</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Nazwisko:</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" th:value="${user.lastName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Rola:</label>
+                            <select id="role" name="role" class="form-control" required>
+                                <option th:each="role : ${T(com.uwb.commercialrentalmanagementapp.Enum.UserRole).values()}"
+                                        th:value="${role}" th:text="${role}">
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                        <button type="button" class="btn btn-secondary ml-2" onclick="goBack()">Anuluj</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleMenu() {
+        var sideMenu = document.querySelector('.side-menu');
+        sideMenu.classList.toggle('open');
+    }
+
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    function redirectToRegister() {
+        window.location.href = "/register";
+    }
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</body>
+</html>

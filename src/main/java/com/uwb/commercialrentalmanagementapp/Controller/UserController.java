@@ -6,6 +6,7 @@ import com.uwb.commercialrentalmanagementapp.Service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -96,11 +97,62 @@ public class UserController {
         return "admin_panel_manage_users_page";
     }
 
+    @GetMapping("/editUser/{userId}")
+    public String showEditUserForm(@PathVariable Long userId, Model model, HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser != null) {
+            Long loggedInUserIduserId = loggedInUser.getId();
+            String loggedRole = userService.getRole(loggedInUserIduserId);
+
+            if (!loggedRole.equals(UserRole.ADMINISTRATOR.getRoleName())) {
+                return "redirect:/main_page";
+            }
+            User user = userService.getUserById(userId);
+            model.addAttribute("user", user);
+            return "edit_user_form_page";
+        }else {
+                return "redirect:/login";
+            }
+
+    }
+
+    @PostMapping("/editUser/{userId}")
+    public String editUser(@PathVariable Long userId,
+                           @RequestParam String username,
+                           @RequestParam String firstName,
+                           @RequestParam String lastName,
+                           @RequestParam String email,
+                           @RequestParam UserRole role,
+                           RedirectAttributes redirectAttributes){
+
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Użytkownik nie istnieje.");
+                return "redirect:/admin_panel";
+            }
+
+            user.setUsername(username);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setRole(role.getRoleName());
+
+            userService.saveUser(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Pomyślnie zaktualizowano użytkownika!");
+            return "redirect:/admin_panel_manage_users";
+        }
 
     @PostMapping("/deleteUser/{userId}")
-    public String deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
-        return "redirect:/admin_panel"; // przekierowuje z powrotem do listy użytkowników
+    public String deleteUser(@PathVariable Long userId,RedirectAttributes redirectAttributes) {
+        try {
+            userService.deleteUser(userId);
+        } catch (DataIntegrityViolationException e) {
+            String errorMessage = "Wystąpił błąd: " + e.getMessage(); // Pobieranie komunikatu błędu
+            System.out.println(errorMessage);
+            redirectAttributes.addFlashAttribute("error", "Nie udało się usunąć użytkownika.");
+            return "redirect:/admin_panel_manage_users";
+        }
+        return "redirect:/admin_panel";
     }
 
     @PostMapping("/addUser")
@@ -133,12 +185,10 @@ public class UserController {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
-            // Pobierz informacje o zalogowanym użytkowniku
             Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.WYNAJMUJACY.getRoleName()) && !loggedRole.equals(UserRole.NAJEMCA.getRoleName())) {
-                // Użytkownik nie ma roli wynajmujacy lub najemca, przekieruj na stronę główną
                 return "redirect:/main_page";
             }
 
@@ -168,7 +218,6 @@ public class UserController {
             model.addAttribute("rentalAgreements", rentalAgreements);
             model.addAttribute("properties", properties);
         } else {
-            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
             return "redirect:/login";
         }
 

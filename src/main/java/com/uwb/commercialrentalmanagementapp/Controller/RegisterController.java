@@ -28,7 +28,7 @@ public class RegisterController {
                            RedirectAttributes redirectAttributes,
                            HttpSession session) {
         if (userService.userExists(username)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Użytkownik o podanej nazwie już istnieje.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Użytkownik o podanej nazwie już istnieje");
             return "redirect:/register";
         }
 
