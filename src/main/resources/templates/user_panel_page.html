@@ -127,7 +127,6 @@
                 <h2 class="hCenter">Wystawianie faktur</h2>
                 <br>
                 <form method="post" id ="rentAndInvoiceForm" action="/createInvoice">
-<!--                <p id="rentStatus">Status opłaty czynszu przez najemcę: </p>-->
                     <p id="selectedPropertyAddress"><b>Dotyczy nieruchomości: </b></p>
                     <div id="sellerInfoContainer">
                         <p><b><i>Dane sprzedawcy (wynajmującego)</i></b></p>
@@ -146,7 +145,6 @@
                     <p id="invoiceRentAmount"><b>Cena usługi: </b></p>
                     <p id="invoicePaymentMethod"><b>Forma płatności: </b></p>
                     <p><b>Termin zapłaty: </b><span id="paymentDeadline"></span></p>
-<!--                    <p id="rentPaymentDate">Data opłacenia faktury przez najemcę: </p>-->
                     <p id="rentNextInvoiceIssueDate"><b>Kolejną fakturę dla najemcy wystaw: </b></p>
                     <button type="submit" id="createInvoiceButton">Wystaw fakturę</button>
                 </form>
@@ -177,9 +175,8 @@
         var today = new Date();
         var lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-        // Formatuj datę na "DD.MM.RRRR"
-        var formattedDay = String(lastDayOfMonth.getDate()).padStart(2, '0'); // Dodaj zero z przodu, jeśli potrzeba
-        var formattedMonth = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0'); // Dodaj zero z przodu, jeśli potrzeba
+        var formattedDay = String(lastDayOfMonth.getDate()).padStart(2, '0');
+        var formattedMonth = String(lastDayOfMonth.getMonth() + 1).padStart(2, '0');
         var formattedYear = lastDayOfMonth.getFullYear();
 
         return formattedDay + '.' + formattedMonth + '.' + formattedYear;
@@ -205,18 +202,14 @@
         var currentMonth = today.getMonth();
         var currentYear = today.getFullYear();
 
-        // Dodaj jeden miesiąc do aktualnego miesiąca
         var nextMonth = (currentMonth + 1) % 12;
 
-        // Jeśli dodanie miesiąca przekroczyło grudzień, zaktualizuj rok
         var nextYear = currentYear + Math.floor((currentMonth + 1) / 12);
 
-        // Utwórz obiekt daty dla terminu zapłaty
-        var paymentDate = new Date(nextYear, nextMonth, 10); // Ustaw na 10. dzień następnego miesiąca
+        var paymentDate = new Date(nextYear, nextMonth, 10);
 
-        // Formatuj datę na "DD.MM.RRRR"
-        var formattedDay = String(paymentDate.getDate()).padStart(2, '0'); // Dodaj zero z przodu, jeśli potrzeba
-        var formattedMonth = String(paymentDate.getMonth() + 1).padStart(2, '0'); // Dodaj zero z przodu, jeśli potrzeba
+        var formattedDay = String(paymentDate.getDate()).padStart(2, '0');
+        var formattedMonth = String(paymentDate.getMonth() + 1).padStart(2, '0');
         var formattedYear = paymentDate.getFullYear();
 
         return formattedDay + '.' + formattedMonth + '.' + formattedYear;
@@ -226,19 +219,15 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Funkcja obsługująca opłacanie płatności za media
         function createInvoice(propertyId) {
             var xhr = new XMLHttpRequest();
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        // Pomyślnie
                         alert("Faktura została wystawiona.");
-                        // Możesz też wykonać dodatkowe operacje, np. przeładować stronę
                         window.location.reload();
                     } else {
-                        // Wystąpił błąd podczas wystawiania faktury
                         alert("Wystąpił błąd podczas wystawiania faktury. Spróbuj ponownie później.");
                         console.error("Błąd żądania AJAX:", xhr.status);
                     }
@@ -250,10 +239,9 @@
             xhr.send("propertyId=" + propertyId);
         }
 
-        // Funkcja obsługująca kliknięcie przycisku "Wystaw fakturę" w formularzu
         function handleInvoice() {
             document.getElementById("rentAndInvoiceForm").addEventListener("submit", function(event) {
-                event.preventDefault(); // Zapobiegamy domyślnej akcji formularza (czyli wysłaniu żądania POST)
+                event.preventDefault();
 
                 var propertyId = document.getElementById("property").value;
 
@@ -263,25 +251,20 @@
             });
         }
 
-        // Wywołaj funkcję obsługującą płatność po załadowaniu strony
         handleInvoice();
     });
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Funkcja obsługująca opłacanie płatności za media
         function payUtilities(paymentId) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
-                        // Pomyślnie opłacono płatność, możesz wykonać odpowiednie działania
                         alert("Płatność za media została pomyślnie opłacona.");
-                        // Możesz też wykonać dodatkowe operacje, np. przeładować stronę
                         window.location.reload();
                     } else {
-                        // Wystąpił błąd podczas opłacania płatności
-                        alert("Wystąpił błąd podczas opłacania płatności. Spróbuj ponownie później.");
+                        alert("Wystąpił błąd podczas opłacania płatności. Być może opłata za media została juz dokonana. Spróbuj ponownie później.");
                         console.error("Błąd żądania AJAX:", xhr.status);
                     }
                 }
@@ -291,30 +274,24 @@
             xhr.send(JSON.stringify({ status: "paid" }));
         }
 
-        // Funkcja obsługująca kliknięcie przycisku "Opłać" w formularzu
         function handlePayment() {
             document.getElementById("rentAndUtilitiesForm").addEventListener("submit", function(event) {
-                event.preventDefault(); // Zapobiegamy domyślnej akcji formularza (czyli wysłaniu żądania POST)
+                event.preventDefault();
 
-                // var propertyId = document.getElementById("property").value;
-                var paymentIdString = document.getElementById("utilitiesId").textContent.trim(); // Pobieramy ID płatności jako tekst
-                var paymentId = parseInt(paymentIdString.replace('ID płatności:', '').trim()); // Konwertujemy tekst na liczbę całkowitą
+                var paymentIdString = document.getElementById("utilitiesId").textContent.trim();
+                var paymentId = parseInt(paymentIdString.replace('ID płatności:', '').trim());
                 if (paymentId  !== '') {
-                    // Jeśli wybrano nieruchomość, wykonaj płatność
                     payUtilities(paymentId );
                 } else {
-                    // Jeśli nie wybrano nieruchomości, wyświetl komunikat
                     alert("Wybierz nieruchomość przed opłaceniem płatności za media.");
                 }
             });
         }
 
-        // Wywołaj funkcję obsługującą płatność po załadowaniu strony
         handlePayment();
     });
 </script>
 <script>
-    // Dane do wykresu - pobierz z modelu Thymeleaf
     var utilitiesData = [];
 
     function generateChart() {
@@ -324,9 +301,7 @@
         console.log('Months:', months);
         console.log('Amounts:', amounts);
 
-        // Znajdź istniejący wykres
         var existingChart = Chart.getChart("utilitiesChart");
-        // Jeśli istnieje, zniszcz go
         if (existingChart) {
             existingChart.destroy();
         }
@@ -357,9 +332,7 @@
     }
 
     function updateUtilitiesStatus() {
-        // Znajdź istniejący wykres
         var existingChart = Chart.getChart("utilitiesChart");
-        // Jeśli istnieje, zniszcz go
         if (existingChart) {
             existingChart.destroy();
         }
@@ -375,7 +348,6 @@
                         var utilitiesAmount = response.amounts;
                         var latestAmount = response.latestAmount;
                         var paymentIdForProperty = response.paymentIdForProperty;
-                        // Mapowanie miesięcy na polskie nazwy
                         const mapMonth = month => {
                             switch (month) {
                                 case 'January': return 'Styczeń';
@@ -396,7 +368,6 @@
                         const utilitiesMonths = response.months.map(mapMonth);
                         const paymentMonth = mapMonth(response.paymentMonth);
 
-                        // var rentStatus = response.rentStatus;
                         var selectedProperty = document.getElementById("property");
                         var selectedPropertyAddress = document.getElementById("selectedPropertyAddress");
                         selectedPropertyAddress.innerHTML = "<b>Dotyczy nieruchomości: </b>" + selectedProperty.options[selectedProperty.selectedIndex].text;
@@ -405,17 +376,13 @@
                         var invoiceFirstLastNameTenant = response.invoiceFirstLastNameTenant;
                         var invoiceAddressTenant = response.invoiceAddressTenant;
                         var invoiceRentAmount = response.invoiceRentAmount;
-                        // Ustaw ostatni dzień miesiąca + rok w elemencie o id "saleDate"
+
                         document.getElementById("saleDate").textContent = getLastDayOfMonth();
-                        // Ustaw nazwę aktualnego miesiąca i roku w elemencie o id "nameOfService"
                         document.getElementById("nameOfService").textContent = getCurrentMonthAndYear();
-                        // Ustaw termin zapłaty w elemencie o id "paymentDeadline"
                         document.getElementById("paymentDeadline").textContent = getPaymentDeadline();
                         document.getElementById("invoicePaymentMethod").innerHTML = "<b>Forma płatności: </b>Zasilenie portfela wynajmującego w aplikacji RentManager";
                         document.getElementById("rentNextInvoiceIssueDate").innerHTML = "<b>Kolejną fakturę dla najemcy wystaw: </b>" + calculateNextInvoiceDate();
 
-                        // var rentPaymentDate = response.rentPaymentDate;
-                        // var rentNextInvoiceIssueDate = response.rentNextInvoiceIssueDate;
 
                         console.log('Status opłat za media:', utilitiesStatus);
                         console.log('Kwota za media:', utilitiesAmount);
@@ -424,20 +391,17 @@
                         console.log("Opłata za miesiąc: ", paymentMonth);
                         console.log("ID płatności: ", paymentIdForProperty);
 
-                        // console.log("Status opłaty za czynsz: ", rentStatus);
                         console.log("Imię i nazwisko sprzedawcy: ", invoiceFirstLastNameLandlord);
                         console.log("Adres sprzedawcy: ", invoiceAddressLandlord)
                         console.log("Imię i nazwisko nabywcy: ", invoiceFirstLastNameTenant);
                         console.log("Adres nabywcy: ", invoiceAddressTenant);
 
-                        // console.log("Data opłacenia faktury: ", rentPaymentDate);
                         console.log("Wystawienie kolejne faktury: ", rentNextInvoiceIssueDate);
 
                         document.getElementById('utilitiesStatus').innerHTML = "<b>Status opłat za media: </b>" + utilitiesStatus;
                         document.getElementById('utilitiesAmount').innerHTML = "<b>Kwota za media: </b>" + latestAmount + " PLN";
                         document.getElementById('utilitiesId').innerHTML = "<b>ID płatności: </b>" + paymentIdForProperty;
 
-                        // document.getElementById("rentStatus").textContent = "Status opłaty czynszu przez najemcę: " + rentStatus;
                         document.getElementById("invoiceFirstLastNameLandlord").innerHTML = "<b>Imię i nazwisko: </b>" + invoiceFirstLastNameLandlord;
                         document.getElementById("invoiceAddressLandlord").innerHTML = "<b>Adres: </b>" + invoiceAddressLandlord;
                         document.getElementById("invoiceFirstLastNameTenant").innerHTML = "<b>Imię i nazwisko: </b>" + invoiceFirstLastNameTenant;
@@ -445,10 +409,8 @@
                         document.getElementById("invoiceRentAmount").innerHTML = "<b>Cena usługi: </b>" + invoiceRentAmount;
 
 
-                        // document.getElementById("rentPaymentDate").textContent = "Data opłacenia faktury przez najemcę: " + rentPaymentDate;
-                        // document.getElementById("rentNextInvoiceIssueDate").textContent = "Kolejną faktrurę dla najemcy wystaw: " + rentNextInvoiceIssueDate;
 
-                        if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana.') {
+                        if (utilitiesStatus === 'Opłata za media nie została jeszcze dokonana') {
                             document.getElementById('utilitiesMonth').innerHTML = "<b>Opłata za miesiąc: </b>" + paymentMonth;
                         } else {
                             document.getElementById('utilitiesMonth').innerHTML = "<b>Opłata za miesiąc: </b>brak zaległych opłat";

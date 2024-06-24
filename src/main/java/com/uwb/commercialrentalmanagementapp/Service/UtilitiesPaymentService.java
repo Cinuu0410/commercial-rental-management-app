@@ -63,7 +63,6 @@ public class UtilitiesPaymentService {
         return utilitiesPaymentRepository.findPaymentIdForUnpaidPaymentByPropertyId(propertyId);
     }
 
-    // Metoda aktualizująca status płatności za media na "paid"
     public void updateUtilitiesStatusToPaid(Long paymentId, Date paymentDate) {
         utilitiesPaymentRepository.updateStatusToPaid(paymentId, paymentDate);
     }

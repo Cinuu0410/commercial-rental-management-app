@@ -19,36 +19,31 @@ public class FormController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Imię nie może zawierać cyfr
         if (containsDigit(name)) {
             redirectAttributes.addFlashAttribute("error", "Imię nie może zawierać cyfr. Wprowadź odpowiednie dane jeszcze raz.");
             return "redirect:/contact_us";
         }
 
-        // Mumer telefonu musi zawierać dokładnie 9 cyfr
         if (!isValidPhoneNumber(phone)) {
             redirectAttributes.addFlashAttribute("error", "Numer telefonu musi mieć dokładnie 9 cyfr. Wprowadź odpowiednie dane jeszcze raz.");
             return "redirect:/contact_us";
         }
 
-        // Walidacja pola email przy użyciu  regex
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         if (!email.matches(emailRegex)) {
             redirectAttributes.addFlashAttribute("error", "Niepoprawny adres email. Wprowadź odpowiednie dane jeszcze raz.");
-            return "redirect:/contact_us"; // Przekierowanie do strony błędu
+            return "redirect:/contact_us";
         }
 
-        // Procesowanie danych formularza
         model.addAttribute("name", name);
         model.addAttribute("email", email);
         model.addAttribute("phone", phone);
         model.addAttribute("subject", subject);
         model.addAttribute("message", message);
 
-        return "confirmation_page"; // Przekierowanie do strony potwierdzenia
+        return "confirmation_page";
     }
 
-    // Metoda pomocnicza sprawdzająca, czy w ciągu znaków występuje cyfra
     private boolean containsDigit(String str) {
         for (char c : str.toCharArray()) {
             if (Character.isDigit(c)) {
@@ -58,9 +53,7 @@ public class FormController {
         return false;
     }
 
-    // Metoda pomocnicza sprawdzająca poprawność numeru telefonu
     private boolean isValidPhoneNumber(String phoneNumber) {
-        // Sprawdzenie, czy numer telefonu ma dokładnie 9 cyfr
         return phoneNumber.matches("\\d{9}");
     }
 }

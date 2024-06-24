@@ -27,6 +27,27 @@ public class RegisterController {
                            @RequestParam String email, @RequestParam UserRole role,
                            RedirectAttributes redirectAttributes,
                            HttpSession session) {
+
+        if (username.length() < 5 || !username.matches("[a-zA-Z0-9]+")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Nazwa użytkownika musi mieć co najmniej 5 znaków i może składać się tylko z liter i cyfr");
+            return "redirect:/register";
+        }
+
+        if (password.length() < 5) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Hasło musi mieć co najmniej 5 znaków");
+            return "redirect:/register";
+        }
+
+        if (!firstName.matches("[a-zA-Z]+")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Imię może zawierać tylko litery");
+            return "redirect:/register";
+        }
+
+        if (!lastName.matches("[a-zA-Z]+")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Nazwisko może zawierać tylko litery");
+            return "redirect:/register";
+        }
+
         if (userService.userExists(username)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Użytkownik o podanej nazwie już istnieje");
             return "redirect:/register";
@@ -34,7 +55,6 @@ public class RegisterController {
 
         userService.register(username, password, firstName, lastName, email, role);
 
-        // Zaloguj nowo zarejestrowanego użytkownika
         session.setAttribute("username", username);
 
         redirectAttributes.addFlashAttribute("successMessage", "Rejestracja udana!");

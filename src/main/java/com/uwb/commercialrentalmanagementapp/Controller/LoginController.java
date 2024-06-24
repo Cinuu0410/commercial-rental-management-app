@@ -22,10 +22,8 @@ public class LoginController {
             User loggedInUser = userService.getUserByUsername(username);
             Long userId = loggedInUser.getId();
 
-            // Pobierz rolę użytkownika na podstawie ID
             String loggedRole = userService.getRole(userId);
             System.out.println(loggedRole);
-            // Zapisz informacje o zalogowanym użytkowniku i roli w sesji
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
 
@@ -38,19 +36,12 @@ public class LoginController {
     }
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        // Pobierz atrybut sesji loggedInUser
         Object loggedInUser = session.getAttribute("loggedInUser");
 
-        // Jeżeli użytkownik jest zalogowany, wykonaj operacje wylogowywania
         if (loggedInUser != null) {
-            // Tutaj możesz dodać inne operacje związane z wylogowywaniem
-            // na przykład: zakończenie sesji, czyszczenie atrybutów sesji itp.
-
-            // Usuń atrybut sesji zalogowanego użytkownika
             session.removeAttribute("loggedInUser");
         }
 
-        // Przekieruj użytkownika na stronę główną lub inną stronę po wylogowaniu
         return "redirect:/main_page";
     }
 }

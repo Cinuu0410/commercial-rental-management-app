@@ -122,7 +122,8 @@
     <br>
     <p id="totalRevenue"><span class="income-style"><b>Suma przychodów ze wszystkich nieruchomości:</b> <span th:text="${totalRevenue}"></span> PLN</span></p>
     <p id="percentageRate"><span class="income-style"><b>Stawka procentowa ryczałtu:</b> <span th:text="${percentageRate}"></span>%</span></p>
-    <button type="submit" id="payIncomeTaxButton" onclick="handleIncomeTaxCalculation()">Rozlicz podatek</button>
+    <button type="submit" id="payIncomeTaxButton">Rozlicz podatek</button>
+    <p id="taxPaidMessage" style="display: none; color: green;"><b>Podatek dochodowy został już opłacony</b></p>
 </div>
 <script>
     function formatDate(dateString) {
@@ -191,7 +192,7 @@
             row.appendChild(paymentIdCell);
 
             var paymentDateCell = document.createElement("td");
-            paymentDateCell.textContent = formatDate(rentPayment.issueDate); // Użyj formatDate
+            paymentDateCell.textContent = formatDate(rentPayment.issueDate);
             row.appendChild(paymentDateCell);
 
             var rentalAgreementIdCell = document.createElement("td");
@@ -231,14 +232,18 @@
         });
     }
 
-    let taxCalculated = false; // Zmienna stanu
+    let taxCalculated = false;
 
     function calculateIncomeTax(totalRevenue, percentageRate) {
+        console.log("Rozpoczęto obliczanie podatku...");
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
+                    console.log("Podatek dochodowy został odprowadzony pomyślnie.");
                     alert("Podatek dochodowy został odprowadzony pomyślnie.");
+                    document.getElementById("payIncomeTaxButton").style.display = 'none';
+                    localStorage.setItem("taxPaid", "true");
                     window.location.reload();
                 } else {
                     alert("Wystąpił błąd podczas obliczania podatku dochodowego. Spróbuj ponownie później.");
@@ -246,31 +251,39 @@
                 }
             }
         };
-        xhr.open("POST", "/calculateIncomeTax?totalRevenue=" + totalRevenue + "&percentageRate=" + percentageRate);
+        xhr.open("POST", "/calculateIncomeTax?totalRevenue=" + totalRevenue + "&percentageRate=" + percentageRate, true);
         xhr.send();
     }
 
-    function handleIncomeTaxCalculation() {
-        document.getElementById("payIncomeTaxButton").addEventListener("click", function(event) {
-            event.preventDefault();
+    function handleIncomeTaxCalculation(event) {
+        event.preventDefault();
 
-            var totalRevenueText = document.getElementById("totalRevenue").textContent.trim();
-            var percentageRateText = document.getElementById("percentageRate").textContent.trim();
+        var totalRevenueText = document.getElementById("totalRevenue").textContent.trim();
+        var percentageRateText = document.getElementById("percentageRate").textContent.trim();
 
-            var totalRevenue = parseFloat(totalRevenueText.split(':')[1].trim().replace('PLN', '').trim());
-            var percentageRate = parseFloat(percentageRateText.split(':')[1].trim().replace('%', '').trim());
+        var totalRevenue = parseFloat(totalRevenueText.split(':')[1].trim().replace('PLN', '').trim());
+        var percentageRate = parseFloat(percentageRateText.split(':')[1].trim().replace('%', '').trim());
 
-            console.log("totalRevenue: " + totalRevenue);
-            console.log("percentageRate: " + percentageRate);
+        console.log("totalRevenue: " + totalRevenue);
+        console.log("percentageRate: " + percentageRate);
 
-            if (!isNaN(totalRevenue) && !isNaN(percentageRate)) {
-                document.getElementById("payIncomeTaxButton").disabled = true; // Zablokuj przycisk natychmiast
-                calculateIncomeTax(totalRevenue, percentageRate);
-            } else {
-                alert("Wypełnij wszystkie wymagane pola przed obliczeniem podatku dochodowego.");
-            }
-        });
+        if (!isNaN(totalRevenue) && !isNaN(percentageRate)) {
+            document.getElementById("payIncomeTaxButton").disabled = true;
+            calculateIncomeTax(totalRevenue, percentageRate);
+        } else {
+            alert("Wypełnij wszystkie wymagane pola przed obliczeniem podatku dochodowego.");
+        }
     }
+
+    document.getElementById("payIncomeTaxButton").addEventListener("click", handleIncomeTaxCalculation);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        if (localStorage.getItem("taxPaid") === "true") {
+            document.getElementById("payIncomeTaxButton").style.display = 'none';
+            document.getElementById("taxPaidMessage").style.display = 'block';
+        }
+    });
+
 </script>
 <script>
     function toggleMenu() {

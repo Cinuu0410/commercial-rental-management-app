@@ -37,7 +37,6 @@ public class UserService {
         }
     }
 
-    //metoda potrzebna przy dodawaniu użytkownika z panelu admina
     public String hashAndSaltPassword(String password) {
         if (password != null) {
             return hashPassword(password);

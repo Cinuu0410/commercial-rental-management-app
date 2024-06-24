@@ -67,15 +67,6 @@
         </div>
     </div>
 </div>
-<!--<div class="container">-->
-<!--    <h3 class="hCenter">Roczne przychody z nieruchomości</h3>-->
-<!--    <div class="year-selection">-->
-<!--        <label for="yearSelect">Wybierz rok:</label>-->
-<!--        <select id="yearSelect">-->
-<!--        </select>-->
-<!--    </div>-->
-<!--    <div id="annualChart" th:data-annual-incomes-json="${annualIncomesJson}"></div>-->
-<!--</div>-->
 <div class="container">
     <h3 class="hCenter">Roczne przychody z nieruchomości</h3>
     <div class="year-selection">
@@ -201,10 +192,10 @@
                 var lastRentInfo = JSON.parse(lastRentInfoJson);
                 console.log("Parsed last rent info:", lastRentInfo);
 
-                var percentIncrease = parseInt(percentIncreaseSelect.value) / 100; // Procentowa podwyżka czynszu
+                var percentIncrease = parseInt(percentIncreaseSelect.value) / 100;
                 console.log("Percent increase:", percentIncrease);
 
-                var currentMonth = new Date().getMonth() + 1; // Months are 0-based in JavaScript
+                var currentMonth = new Date().getMonth() + 1;
                 var monthsLeftInYear = 12 - currentMonth;
 
                 var incomeWithoutIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
@@ -218,7 +209,7 @@
                 var incomeWithIncrease = Object.values(lastRentInfo).reduce(function(acc, rentPayment) {
                     var paymentMonth = new Date(rentPayment.issueDate).getMonth() + 1;
                     var monthsLeft = 12 - paymentMonth;
-                    return acc + (rentPayment.paymentAmount * (1+percentIncrease) * monthsLeft); // 10% increase
+                    return acc + (rentPayment.paymentAmount * (1+percentIncrease) * monthsLeft);
                 }, 0);
 
                 console.log("Income with increase:", incomeWithIncrease);
@@ -233,13 +224,11 @@
 
     percentIncreaseSelect.addEventListener("change", calculateIncome);
 
-    // Wywołanie funkcji raz na start, aby zainicjować wyświetlanie danych
     calculateIncome();
     });
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Pierwszy wykres
         var chartElement = document.querySelector("#chart");
         var propertyDataJson = chartElement.dataset.propertyDataJson;
 
@@ -247,7 +236,6 @@
             try {
                 var propertyData = JSON.parse(propertyDataJson);
 
-                // Przygotuj dane do wykresu
                 var propertyNames = [];
                 var propertyIncomesData = [];
 
@@ -256,7 +244,6 @@
                     propertyIncomesData.push(property.income);
                 });
 
-                // Definicja opcji dla wykresu
                 var options = {
                     series: [{
                         name: 'Przychody z nieruchomości',
@@ -317,7 +304,6 @@
                     }
                 };
 
-                // Renderowanie wykresu
                 var chart = new ApexCharts(chartElement, options);
                 chart.render();
             } catch (e) {
@@ -327,7 +313,7 @@
             console.error("Property data JSON is undefined");
         }
 
-        // Drugi wykres - wybór roku
+
         var annualChartElement = document.querySelector("#annualChart");
         var annualIncomesJson = annualChartElement.getAttribute("data-annual-incomes-json");
         console.log("Annual incomes JSON:", annualIncomesJson);
@@ -339,7 +325,6 @@
                 var annualIncomes = JSON.parse(annualIncomesJson);
                 console.log("Parsed annual incomes:", annualIncomes);
 
-                // Zbierz wszystkie dostępne lata z danych
                 var availableYears = new Set();
                 Object.values(annualIncomes).forEach(incomesPerProperty => {
                     Object.keys(incomesPerProperty).forEach(year => {
@@ -357,7 +342,7 @@
                     yearSelect.appendChild(option);
                 });
 
-                var annualChart; // Zmienna przechowująca instancję wykresu
+                var annualChart;
 
                 function renderAnnualChart(year) {
                     var propertyNames = [];
@@ -463,7 +448,7 @@
                     };
 
                     if (annualChart) {
-                        annualChart.destroy(); // Zniszcz stary wykres, jeśli istnieje
+                        annualChart.destroy();
                     }
 
                     annualChart = new ApexCharts(annualChartElement, annualOptions);
@@ -499,11 +484,7 @@
     }
 
     function logout() {
-        // W tym miejscu możesz wykonać operacje związane z wylogowywaniem,
-        // np. zakończenie sesji, usuwanie atrybutu 'loggedInUser' itp.
-
-        // Następnie przekieruj użytkownika na stronę wylogowania
-        window.location.href = "/logout";  // Zakładając, że masz endpoint '/logout' do obsługi wylogowywania
+        window.location.href = "/logout";
     }
 </script>
 </body>

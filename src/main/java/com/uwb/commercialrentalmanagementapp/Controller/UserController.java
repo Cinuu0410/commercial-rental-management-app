@@ -42,16 +42,13 @@ public class UserController {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
-            // Pobierz informacje o zalogowanym użytkowniku
             Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.ADMINISTRATOR.getRoleName())) {
-                // Użytkownik nie ma roli SUPER_USER(ADMINISTRATOR), przekieruj na stronę główną
                 return "redirect:/main_page";
             }
 
-            // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
 
@@ -59,7 +56,6 @@ public class UserController {
             model.addAttribute("role", loggedRole);
 
         } else {
-            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
             return "redirect:/login";
         }
 
@@ -71,16 +67,13 @@ public class UserController {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser != null) {
-            // Pobierz informacje o zalogowanym użytkowniku
             Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.ADMINISTRATOR.getRoleName())) {
-                // Użytkownik nie ma roli SUPER_USER(ADMINISTRATOR), przekieruj na stronę główną
                 return "redirect:/main_page";
             }
 
-            // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
 
@@ -90,7 +83,6 @@ public class UserController {
             List<User> getAllUsers = userService.getAllUsers();
             model.addAttribute("getAllUsers", getAllUsers);
         } else {
-            // Użytkownik nie jest zalogowany, przekieruj na stronę logowania
             return "redirect:/login";
         }
 
@@ -147,7 +139,7 @@ public class UserController {
         try {
             userService.deleteUser(userId);
         } catch (DataIntegrityViolationException e) {
-            String errorMessage = "Wystąpił błąd: " + e.getMessage(); // Pobieranie komunikatu błędu
+            String errorMessage = "Wystąpił błąd: " + e.getMessage();
             System.out.println(errorMessage);
             redirectAttributes.addFlashAttribute("error", "Nie udało się usunąć użytkownika.");
             return "redirect:/admin_panel_manage_users";
@@ -177,7 +169,7 @@ public class UserController {
 
         userService.saveUser(newUser);
         redirectAttributes.addFlashAttribute("successMessage", "Pomyślnie dodano użytkownika!");
-        return "redirect:/admin_panel_manage_users"; // Lub inna strona docelowa
+        return "redirect:/admin_panel_manage_users";
     }
 
     @GetMapping("/user_panel")
@@ -199,19 +191,16 @@ public class UserController {
             }
 
 
-            // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
             List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
             if (!properties.isEmpty()) {
-                Long propertyId = properties.get(0).getPropertyId(); // Pobierz ID pierwszej nieruchomości
+                Long propertyId = properties.get(0).getPropertyId();
                 String utilitiesStatus = utilitiesPaymentService.getUtilitiesStatusForProperty(propertyId);
                 model.addAttribute("utilitiesStatus", utilitiesStatus);
             }
 
-
-            // Przekaz informacje o saldzie do modelu
             model.addAttribute("walletBalance", walletBalance);
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("role", loggedRole);
@@ -271,7 +260,7 @@ public class UserController {
     public String payUtilities(@PathVariable Long paymentId, HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+            return "redirect:/login";
         }
 
 
@@ -283,24 +272,15 @@ public class UserController {
         }
 
         if (walletBalance.compareTo(utilitiesAmount) >= 0) {
-            // Zaktualizuj stan portfela
             walletService.deductFromBalance(loggedInUser, utilitiesAmount);
-
-            // Uzyskaj bieżący znacznik czasu w milisekundach
             long currentTimeMillis = System.currentTimeMillis();
-
-            // Utwórz obiekt Date na podstawie bieżącego znacznika czasu
             Date paymentDate = new Date(currentTimeMillis);
-
-            // Wywołaj metodę usługi do aktualizacji statusu płatności za media
             utilitiesPaymentService.updateUtilitiesStatusToPaid(paymentId, paymentDate);
 
             model.addAttribute("message", "Płatność zakończona pomyślnie.");
         } else {
             model.addAttribute("error", "Brak środków w portfelu.");
         }
-
-        // Przekierowanie z powrotem do panelu użytkownika
         return "redirect:/user_panel";
     }
 
@@ -309,14 +289,12 @@ public class UserController {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
 
         if (loggedInUser == null) {
-            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+            return "redirect:/login";
         }
-            // Pobierz informacje o zalogowanym użytkowniku
             Long userId = loggedInUser.getId();
             String loggedRole = userService.getRole(userId);
 
             if (!loggedRole.equals(UserRole.WYNAJMUJACY.getRoleName())) {
-                // Użytkownik nie ma roli wynajmujacy przekieruj na stronę główną
                 return "redirect:/main_page";
             }
 
@@ -328,51 +306,45 @@ public class UserController {
 
             List<Property> properties = propertyService.getPropertiesForOwner(userId);
 
+            Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
+            BigDecimal totalRevenue = BigDecimal.ZERO;
 
-//
-        // Oblicz roczny przychód dla każdej nieruchomości
-        Map<Property, BigDecimal> propertyIncomes = new HashMap<>();
-        BigDecimal totalRevenue = BigDecimal.ZERO;
+            for (Property property : properties) {
+                BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
+                propertyIncomes.put(property, annualIncome);
+                totalRevenue = totalRevenue.add(annualIncome);
+            }
 
-        for (Property property : properties) {
-            BigDecimal annualIncome = rentPaymentService.getAnnualPaymentAmount(property.getPropertyId());
-            propertyIncomes.put(property, annualIncome);
-            totalRevenue = totalRevenue.add(annualIncome); // Dodajemy przychód do całkowitej sumy
-        }
+            List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
+            Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
 
-        // Pobierz informacje o umowach najmu i ich rocznym przychodzie z płatności czynszu
-        List<RentalAgreement> rentalAgreements = rentalAgreementService.getRentalAgreementsForUser(userId);
-        Map<RentalAgreement, BigDecimal> rentalAgreementIncomes = new HashMap<>();
-
-        for (RentalAgreement agreement : rentalAgreements) {
-            BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
-            rentalAgreementIncomes.put(agreement, totalPaymentAmount);
-        }
+            for (RentalAgreement agreement : rentalAgreements) {
+                BigDecimal totalPaymentAmount = rentPaymentService.getAnnualPaymentAmount(agreement.getAgreementId());
+                rentalAgreementIncomes.put(agreement, totalPaymentAmount);
+            }
 
 
-        // Ustal stawkę procentową ryczałtu na podstawie całkowitego przychodu
-        BigDecimal percentageRate;
-        if (totalRevenue.compareTo(new BigDecimal("100000")) <= 0) {
-            percentageRate = new BigDecimal("8.5");
-        } else {
-            percentageRate = new BigDecimal("12.5");
-        }
-        model.addAttribute("propertyIncomes", propertyIncomes);
-        model.addAttribute("totalRevenue", totalRevenue);
-        model.addAttribute("percentageRate", percentageRate);
-        model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
+            BigDecimal percentageRate;
+
+            if (totalRevenue.compareTo(new BigDecimal("100000")) <= 0) {
+                percentageRate = new BigDecimal("8.5");
+            } else {
+                percentageRate = new BigDecimal("12.5");
+            }
+            model.addAttribute("propertyIncomes", propertyIncomes);
+            model.addAttribute("totalRevenue", totalRevenue);
+            model.addAttribute("percentageRate", percentageRate);
+            model.addAttribute("rentalAgreementIncomes", rentalAgreementIncomes);
 
 
-            // Dodaj informacje o zalogowanym użytkowniku do modelu
             session.setAttribute("loggedInUser", loggedInUser);
             session.setAttribute("role", loggedRole);
 
-            // Przekaz informacje o saldzie do modelu
             model.addAttribute("walletBalance", walletBalance);
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("role", loggedRole);
             model.addAttribute("properties", properties);
 
-        return "taxes_page";
+            return "taxes_page";
     }
 }

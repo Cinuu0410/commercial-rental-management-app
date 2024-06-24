@@ -26,7 +26,6 @@ public class WalletController {
     public String viewWallet(Model model, HttpSession session) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
             return "redirect:/login";
         }
 
@@ -35,11 +34,9 @@ public class WalletController {
             walletBalance = BigDecimal.ZERO;
             session.setAttribute("walletBalance", walletBalance);
         }
-        // Przekaz informacje o saldzie do modelu
         model.addAttribute("walletBalance", walletBalance);
         model.addAttribute("loggedInUser", loggedInUser);
 
-        // Wyrenderuj widok portfela
         return "wallet_page";
     }
 
@@ -49,6 +46,4 @@ public class WalletController {
         walletService.deductFromBalance(loggedInUser, amount);
         return "redirect:/wallet";
     }
-
-
 }

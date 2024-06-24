@@ -3,7 +3,6 @@ package com.uwb.commercialrentalmanagementapp.Repository;
 import com.uwb.commercialrentalmanagementapp.Model.RentalAgreement;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,5 +11,4 @@ public interface RentalAgreementRepository extends JpaRepository<RentalAgreement
 
     Optional<RentalAgreement> findByProperty_PropertyId(Long propertyId);
 
-    List<RentalAgreement> findAllByProperty_PropertyId(Long propertyId);
 }

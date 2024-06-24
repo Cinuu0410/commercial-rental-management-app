@@ -1,24 +1,19 @@
 package com.uwb.commercialrentalmanagementapp.Controller;
 
 
-import com.uwb.commercialrentalmanagementapp.Model.Property;
 import com.uwb.commercialrentalmanagementapp.Model.RentPayment;
 import com.uwb.commercialrentalmanagementapp.Model.User;
 import com.uwb.commercialrentalmanagementapp.Service.RentPaymentService;
 import com.uwb.commercialrentalmanagementapp.Service.WalletService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j
@@ -54,17 +49,15 @@ public class RentPaymentController {
     public String payVatTax(@PathVariable Long paymentId, HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+            return "redirect:/login";
         }
 
-        // Sprawdzenie istnienia płatności i kwoty VAT
         RentPayment rentPayment = rentPaymentService.getRentPaymentById(paymentId);
         if (rentPayment == null || rentPayment.getVatPaid()) {
             model.addAttribute("error", "Nieprawidłowa płatność lub VAT już odprowadzony.");
             return "redirect:/taxes_page";
         }
 
-        // Obliczenie kwoty VAT
         BigDecimal vatAmount = rentPaymentService.calculateVatAmount(rentPayment.getPaymentAmount());
 
         BigDecimal walletBalance = walletService.getBalance(loggedInUser.getId());
@@ -74,18 +67,13 @@ public class RentPaymentController {
         }
 
         if (walletBalance.compareTo(vatAmount) >= 0) {
-            // Zaktualizuj stan portfela
             walletService.deductFromBalance(loggedInUser, vatAmount);
-
-            // Wywołaj metodę usługi do aktualizacji statusu płatności za media
             rentPaymentService.updateVatPaidStatus(paymentId);
 
             model.addAttribute("message", "Podatek odprowadzony do US pomyślnie.");
         } else {
             model.addAttribute("error", "Brak środków w portfelu.");
         }
-
-        // Przekierowanie z powrotem do strony z podatkami
         return "redirect:/taxes_page";
     }
 
@@ -95,7 +83,7 @@ public class RentPaymentController {
                                      @RequestParam("percentageRate") String percentageRateStr) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
-            return "redirect:/login"; // Przekieruj na stronę logowania, jeśli użytkownik nie jest zalogowany
+            return "redirect:/login";
         }
         BigDecimal totalRevenue = new BigDecimal(totalRevenueStr.replaceAll("[^\\d.]", ""));
         BigDecimal percentageRate = new BigDecimal(percentageRateStr.replaceAll("[^\\d.]", ""));
@@ -108,7 +96,6 @@ public class RentPaymentController {
             session.setAttribute("walletBalance", walletBalance);
         }
         if (walletBalance.compareTo(incomeTax) >= 0) {
-            // Zaktualizuj stan portfela
             walletService.deductFromBalance(loggedInUser, incomeTax);
             model.addAttribute("message", "Podatek dochodowwy został rozliczony pomyślnie. Portfel został zaktualizowany");
         } else {
