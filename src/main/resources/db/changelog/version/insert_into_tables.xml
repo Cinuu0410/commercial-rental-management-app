@@ -59,6 +59,15 @@
             <column name="role" value="Najemca"/>
             <column name="wallet" value="2800"/>
         </insert>
+        <insert tableName="app_user">
+            <column name="first_name" value = "Adam"/>
+            <column name="last_name" value = "Borowski"/>
+            <column name="email" value="a.borowski@gmail.com"/>
+            <column name="username" value="Adamo123"/>
+            <column name="password" value="abe31fe1a2113e7e8bf174164515802806d388cf4f394cceace7341a182271ab"/>
+            <column name="role" value="Wynajmujacy"/>
+            <column name="wallet" value="120"/>
+        </insert>
     </changeSet>
 
     <changeSet id="types-of-properties-inserts" author="Marcin Zaczeniuk">
@@ -313,42 +322,49 @@
         </insert>
 
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-01-09"/>
+            <column name="payment_date" value = "2024-01-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>
             <column name="vat_paid" value="true"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-02-09"/>
+            <column name="payment_date" value = "2024-02-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>
             <column name="vat_paid" value="true"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-03-09"/>
+            <column name="payment_date" value = "2024-03-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>
             <column name="vat_paid" value="true"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-04-09"/>
+            <column name="payment_date" value = "2024-04-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>
             <column name="vat_paid" value="true"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-05-09"/>
+            <column name="payment_date" value = "2024-05-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>
             <column name="vat_paid" value="true"/>
         </insert>
         <insert tableName="rent_payments">
-            <column name="payment_date" value = "2024-06-09"/>
+            <column name="payment_date" value = "2024-06-05"/>
+            <column name="rental_agreement_id" value = "1"/>
+            <column name="status" value = "paid"/>
+            <column name="amount" value = "650"/>
+            <column name="vat_paid" value="true"/>
+        </insert>
+        <insert tableName="rent_payments">
+            <column name="payment_date" value = "2024-07-05"/>
             <column name="rental_agreement_id" value = "1"/>
             <column name="status" value = "paid"/>
             <column name="amount" value = "650"/>

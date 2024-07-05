@@ -45,9 +45,16 @@ public class RentPaymentService {
 
         rentPaymentRepository.save(rentPayment);
     }
-
+//stare
+//    public List<RentPayment> getRentPaymentsForPropertyId(Long propertyId) {
+//        return rentPaymentRepository.findAllByRentalAgreementId(propertyId);
+//    }
+//nowe
+public List<RentPayment> getRentPaymentsForRentalAgreementId(Long rentalAgreementId) {
+    return rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+}
     public List<RentPayment> getRentPaymentsForPropertyId(Long propertyId) {
-        return rentPaymentRepository.findAllByRentalAgreementId(propertyId);
+        return rentPaymentRepository.findAllByPropertyId(propertyId);
     }
 
     public RentPayment getRentPaymentById(Long paymentId) {
@@ -133,8 +140,9 @@ public class RentPaymentService {
     }
 
 
-    public BigDecimal getAnnualPaymentAmount(Long rentalAgreementId) {
-        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+    public BigDecimal getAnnualPaymentAmount(Long propertyId) {
+//        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+       List<RentPayment> rentPayments = rentPaymentRepository.findAllByPropertyId(propertyId);
 
         int currentYear = Year.now().getValue();
 
@@ -147,29 +155,29 @@ public class RentPaymentService {
             }
         }
 
-        System.out.println("Rental Agreement ID: " + rentalAgreementId);
+        System.out.println("Property ID: " + propertyId);
         System.out.println("Total payment amount for previous year: " + totalPaymentAmount);
 
         return totalPaymentAmount;
     }
 
-    public BigDecimal getTotalRevenue(Long rentalAgreementId) {
-        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+    public BigDecimal getTotalRevenue(Long propertyId) {
+        List<RentPayment> rentPayments = rentPaymentRepository.findAllByPropertyId(propertyId);
 
         BigDecimal totalPaymentAmount = BigDecimal.ZERO;
         for (RentPayment payment : rentPayments) {
                 totalPaymentAmount = totalPaymentAmount.add(payment.getPaymentAmount());
         }
 
-        System.out.println("Rental Agreement ID: " + rentalAgreementId);
+        System.out.println("Property ID: " + propertyId);
         System.out.println("Total payment amount for previous year: " + totalPaymentAmount);
 
         return totalPaymentAmount;
     }
 
 
-    public Map<Integer, BigDecimal> getAnnualRevenues(Long rentalAgreementId) {
-        List<RentPayment> rentPayments = rentPaymentRepository.findAllByRentalAgreementId(rentalAgreementId);
+    public Map<Integer, BigDecimal> getAnnualRevenues(Long propertyId) {
+        List<RentPayment> rentPayments = rentPaymentRepository.findAllByPropertyId(propertyId);
 
         Map<Integer, BigDecimal> yearlyIncomes = new HashMap<>();
 

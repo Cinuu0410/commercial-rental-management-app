@@ -157,8 +157,24 @@
     </div>
 </span>
 <script>
+    // function calculateNextInvoiceDate() {
+    //     var currentDate = new Date();
+    //     var nextMonth = currentDate.getMonth() + 1;
+    //     var nextYear = currentDate.getFullYear();
+    //     if (nextMonth === 12) {
+    //         nextMonth = 0;
+    //         nextYear++;
+    //     }
+    //     var firstDayNextMonth = new Date(nextYear, nextMonth, 1);
+    //     var fifthDayNextMonth = new Date(firstDayNextMonth.setDate(firstDayNextMonth.getDate() + 4));
+    //     return fifthDayNextMonth.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    // }
     function calculateNextInvoiceDate() {
         var currentDate = new Date();
+        if (currentDate.getDate() === 5) {
+            return "Dziś, tj. " + currentDate.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
         var nextMonth = currentDate.getMonth() + 1;
         var nextYear = currentDate.getFullYear();
         if (nextMonth === 12) {
@@ -169,7 +185,6 @@
         var fifthDayNextMonth = new Date(firstDayNextMonth.setDate(firstDayNextMonth.getDate() + 4));
         return fifthDayNextMonth.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
-
 
     function getLastDayOfMonth() {
         var today = new Date();
@@ -226,6 +241,7 @@
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
                         alert("Faktura została wystawiona.");
+                        console.log("Faktura została wystawiona dla nieruchomości o ID:", propertyId);
                         window.location.reload();
                     } else {
                         alert("Wystąpił błąd podczas wystawiania faktury. Spróbuj ponownie później.");
@@ -233,6 +249,8 @@
                     }
                 }
             };
+
+            console.log("Wystawianie faktury dla nieruchomości o ID:", propertyId);
 
             xhr.open("POST", "/createInvoice");
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -244,8 +262,8 @@
                 event.preventDefault();
 
                 var propertyId = document.getElementById("property").value;
-
-
+                console.log("Złożono formularz dla nieruchomości o ID:", propertyId);
+                document.getElementById("property").value = propertyId;
                 createInvoice(propertyId);
 
             });

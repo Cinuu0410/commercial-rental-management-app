@@ -8,6 +8,7 @@ import com.uwb.commercialrentalmanagementapp.Service.WalletService;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +39,22 @@ public class RentPaymentController {
         }
         return "redirect:/user_panel";
     }
-
+//stare
     @GetMapping("/getRentPaymentsForPropertyId")
     @ResponseBody
     public List<RentPayment> getRentPaymentsForPropertyId(@RequestParam Long propertyId) {
+        List<RentPayment> payments = rentPaymentService.getRentPaymentsForPropertyId(propertyId);
+        System.out.println("Payments for property ID " + propertyId + ": " + payments);
         return rentPaymentService.getRentPaymentsForPropertyId(propertyId);
     }
+//nowe
+//    @GetMapping("/getRentPaymentsForRentalAgreementId")
+//    @ResponseBody
+//    public List<RentPayment> getRentPaymentsForRentalAgreementId(@RequestParam Long rentalAgreementId) {
+//        List<RentPayment> payments = rentPaymentService.getRentPaymentsForRentalAgreementId(rentalAgreementId);
+//        System.out.println("Payments for rental agreement ID " + rentalAgreementId + ": " + payments);
+//        return rentPaymentService.getRentPaymentsForRentalAgreementId(rentalAgreementId);
+//    }
 
     @PostMapping("/payVat/{paymentId}")
     public String payVatTax(@PathVariable Long paymentId, HttpSession session, Model model) {

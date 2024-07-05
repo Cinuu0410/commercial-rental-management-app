@@ -169,16 +169,33 @@
         handleVatPayment();
         handleIncomeTaxCalculation();
     });
-
+//stare
     function updatePaymentsList() {
         var propertyId = document.getElementById("property").value;
+        console.log("ID property: " + propertyId)
 
         fetch('/getRentPaymentsForPropertyId?propertyId=' + propertyId)
             .then(response => response.json())
             .then(data => {
+                console.log("Otrzymane dane:", data);
                 updateTable(data);
             });
     }
+    //nowe
+    // function updatePaymentsList() {
+    //     var rentalAgreementId = document.getElementById("property").value; // pobieramy rentalAgreementId
+    //     console.log("Rental Agreement ID: " + rentalAgreementId);
+    //
+    //     fetch('/api/getRentPaymentsForRentalAgreementId?rentalAgreementId=' + rentalAgreementId)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log("Otrzymane dane:", data);
+    //             updateTable(data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Wystąpił błąd podczas pobierania danych:', error);
+    //         });
+    // }
 
     function updateTable(rentPayments) {
         var tableBody = document.querySelector("tbody");
